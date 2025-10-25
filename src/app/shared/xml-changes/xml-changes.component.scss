@@ -1,0 +1,304 @@
+.xml-changes-container {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  margin-bottom: 0.5rem;
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bs-body-bg); // Dynamic background for container
+  color: var(--bs-body-color); // Dynamic text color for container
+  
+  /* Remove fixed min-height to allow flexible sizing */
+  /* Add spacing between sections */
+  > div {
+    margin-bottom: 1rem;
+  }
+  
+  /* Style for each table section */
+  .mt-4 {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  h5 {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  h6 {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .table {
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--bs-border-color);
+    width: 100%;
+    background-color: var(--bs-body-bg); // Dynamic background for table
+    color: var(--bs-body-color); // Dynamic text color for table
+    border-color: var(--bs-border-color); // Dynamic border color
+    
+    // Remove fixed table layout to allow more flexible column widths
+    table-layout: auto;
+
+    th, td {
+      border: 1px solid var(--bs-border-color);
+      font-size: 0.75rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      background-color: var(--bs-body-bg); // Dynamic background for cells
+      border-color: var(--bs-border-color); // Dynamic border color for cells
+      color: var(--bs-body-color); // Dynamic text color for cells
+    }
+
+    th {
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    td {
+      padding-top: 0.3rem;
+      padding-bottom: 0.3rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Match table header styling from stats-table */
+    thead {
+      th {
+        background-color: var(--bs-tertiary-bg); // Dynamic header background
+        color: var(--bs-body-color); // Dynamic header text color
+      }
+    }
+
+    tbody tr:nth-of-type(odd) {
+      background-color: var(--bs-secondary-bg); // Dynamic background for odd rows
+    }
+
+    tbody tr:nth-of-type(even) {
+      background-color: var(--bs-body-bg); // Dynamic background for even rows
+    }
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    padding-bottom: 5px;
+    
+    &:not(.overflow-x) {
+      overflow-x: visible;
+    }
+    
+    /* Customize scrollbar for better visibility */
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: var(--bs-tertiary-bg);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: var(--bs-primary);
+      border-radius: 4px;
+    }
+  }
+}
+
+/* Cursor help for elements with popovers */
+.cursor-help {
+  cursor: help;
+}
+
+/* Alert styling */
+.alert {
+  font-size: 0.75rem;
+}
+
+/* Fix Math not found error */
+:host {
+  --Math-ceil: 0;
+}
+
+/* Match styling with stats table */
+:host {
+  .card {
+    margin-bottom: 0.5rem !important;
+  }
+
+  .card-header {
+    padding: 0.3rem 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .table {
+    margin-bottom: 0.25rem !important;
+    font-size: 0.8125rem !important;
+  }
+  
+  .table-sm td, 
+  .table-sm th {
+    padding: 0.2rem 0.4rem !important;
+    font-size: 0.8125rem !important;
+  }
+  
+  /* Make headings slightly bigger */
+  .fw-bold {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Adjust alert padding */
+  .alert {
+    padding: 0.35rem 0.75rem !important;
+    margin: 0.25rem !important;
+    font-size: 0.8rem !important;
+  }
+  
+  /* Spinner styling */
+  .spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  /* More compact tables but with reasonable font size */
+  .table-responsive {
+    margin-bottom: 0.25rem !important;
+  }
+  
+  .xml-changes-content {
+    padding: 0.25rem !important;
+  }
+
+  .xml-table {
+    font-size: 0.8125rem !important;
+  }
+  
+  /* Make sure hidden content is properly collapsed */
+  .d-none {
+    display: none !important;
+  }
+  
+  /* Ensure toggle button works properly */
+  .card-header button {
+    &:focus {
+      box-shadow: none !important;
+      outline: none !important;
+    }
+  }
+  
+  /* Force content to be hidden when not shown */
+  .xml-changes-content {
+    padding: 0.25rem !important;
+    
+    &.d-none {
+      height: 0 !important;
+      overflow: hidden !important;
+      padding: 0 !important;
+      margin: 0 !important;
+    }
+  }
+}
+
+/* Column width settings for XML table columns - use min-width and max-width instead of fixed width */
+.table {
+  /* Date column */
+  th:nth-child(1), td:nth-child(1) {
+    min-width: 70px;
+    max-width: 120px;
+    width: auto;
+    text-align: left !important;
+  }
+
+  /* Username column */
+  th:nth-child(2), td:nth-child(2) {
+    min-width: 120px;
+    max-width: 200px;
+    width: auto;
+    text-align: left !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Team column */
+  th:nth-child(3), td:nth-child(3) {
+    min-width: 90px;
+    max-width: 160px;
+    width: auto;
+    text-align: left !important;
+  }
+
+  /* Numeric columns (Keys, Clicks, etc.) */
+  th:nth-child(4), td:nth-child(4),
+  th:nth-child(5), td:nth-child(5),
+  th:nth-child(6), td:nth-child(6),
+  th:nth-child(7), td:nth-child(7) {
+    min-width: 70px;
+    max-width: 110px;
+    width: auto;
+    text-align: right !important;
+  }
+
+  /* Uptime column - slightly wider */
+  th:nth-child(8), td:nth-child(8) {
+    min-width: 80px;
+    max-width: 120px;
+    width: auto;
+    text-align: right !important;
+  }
+
+  /* Pulses column */
+  th:nth-child(9), td:nth-child(9) {
+    min-width: 50px;
+    max-width: 80px;
+    width: auto;
+    text-align: right !important;
+  }
+}
+
+/* Media queries for responsive tables */
+@media (min-width: 992px) {
+  .table-responsive {
+    overflow-x: visible !important;
+  }
+}
+
+/* Make sure tables expand properly on mobile devices */
+@media (max-width: 768px) {
+  .xml-changes-container {
+    overflow-x: hidden;
+    overflow-y: visible;
+    border: none;
+  }
+  
+  .table-responsive {
+    overflow-x: auto;
+    margin: 0 -5px;
+    padding: 0 5px;
+  }
+  
+  .table {
+    min-width: 650px; /* Ensure minimum width for readability on small screens */
+  }
+}
+
+/* Dark theme overrides - ensure Flatly is respected in light mode */
+[data-bs-theme="dark"] .xml-changes-container {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  .table {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+    th, td {
+      background-color: var(--bs-body-bg);
+      border-color: var(--bs-border-color);
+      color: var(--bs-body-color);
+    }
+  }
+}

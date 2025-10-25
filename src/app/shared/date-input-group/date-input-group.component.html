@@ -1,0 +1,82 @@
+<div class="date-input-container bg-body">
+  <div class="input-group date">
+    <form class="form-inline" novalidate>
+      <div class="form-group">
+        <div class="input-group">
+          <input 
+            type="text" 
+            [placeholder]="getLocalizedDateFormat() | translate"
+            [value]="getFormattedDate()"
+            name="dp" 
+            ngbDatepicker
+            #datepicker="ngbDatepicker"
+            class="form-control date-input" 
+            aria-label="Date Picker"
+            [(ngModel)]="dateModel"
+            (dateSelect)="onDateSelect($event)"
+            [readonly]="true"
+            [minDate]="minDate"
+            [maxDate]="maxDate"
+          >
+          <button type="button" class="btn btn-outline-primary theme-sensitive" (click)="datepicker.toggle()" aria-label="Open calendar">
+            <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+    
+    <div class="btn-group" role="group">
+      <!-- First button: Previous week/month - only translate the title -->
+      <button type="button" [title]="'period.previous' | translate" 
+              class="btn btn-sm btn-outline-primary" 
+              (click)="goToFirstButton()">
+        <i class="fa-solid fa-angles-left"></i>
+      </button>
+
+      <!-- Second button: Previous day - only translate the title -->
+      <button type="button" [title]="'period.previous' | translate" 
+              class="btn btn-sm btn-outline-primary" 
+              (click)="goToSecondButton()">
+        <i class="fa-solid fa-angle-left"></i>
+      </button>
+
+      <!-- Third button: Next day - only translate the title -->
+      <button type="button" [title]="'period.next' | translate" 
+              class="btn btn-sm btn-outline-primary" 
+              (click)="goToThirdButton()">
+        <i class="fa-solid fa-angle-right"></i>
+      </button>
+
+      <!-- Fourth button: Next week/month - only translate the title -->
+      <button type="button" [title]="'period.next' | translate" 
+              class="btn btn-sm btn-outline-primary" 
+              (click)="goToFourthButton()">
+        <i class="fa-solid fa-angles-right"></i>
+      </button>
+
+      <button type="button" class="btn btn-sm btn-outline-primary" 
+              [class.active]="isCurrentPeriod" 
+              (click)="goToToday()" 
+              [title]="'period.current' | translate">
+        {{ 'period.current' | translate }}
+      </button>
+      
+      <button type="button" class="btn btn-sm btn-outline-primary" 
+              [class.active]="isPreviousPeriod" 
+              (click)="goToYesterday()" 
+              [title]="'period.previous' | translate">
+        {{ 'period.previous' | translate }}
+      </button>
+      
+      <!-- Units toggle button - only show if not in XML view -->
+      <button *ngIf="viewType !== 'xml'" 
+              type="button" 
+              class="btn btn-sm btn-outline-primary"
+              (click)="toggleUnits()" 
+              [title]="'units.toggle' | translate">
+        <i class="fa-solid" [ngClass]="isMetric ? 'fa-ruler-vertical' : 'fa-ruler-horizontal'"></i>
+        {{ isMetric ? ('units.metric' | translate) : ('units.imperial' | translate) }}
+      </button>
+    </div>
+  </div>
+</div>

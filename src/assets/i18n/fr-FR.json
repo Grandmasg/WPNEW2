@@ -1,0 +1,180 @@
+{
+  "nav": {
+    "daily": "Quotidien",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "overall": "Global",
+    "xml": "XML",
+    "team": "Sous-équipe",
+    "all": "Tous"
+  },
+  
+  "chart": {
+    "metric": "Métrique",
+    "type": "Type de graphique",
+    "height": "Hauteur",
+    "keys": "Touches",
+    "clicks": "Clics",
+    "scrolls": "Défilements",
+    "distance": "Distance",
+    "download": "Téléchargement",
+    "upload": "Téléversement",
+    "uptime": "Temps actif",
+    "pulses": "Impulsions",
+    "column": "Colonne",
+    "bar": "Barre",
+    "line": "Ligne",
+    "byUser": "par Utilisateur",
+    "sortedByRank": "trié par Rang",
+    "sortedBy": "trié par",
+    "sortedAlphabetically": "trié alphabétiquement",
+    "loadError": "Erreur de chargement des données du graphique. Veuillez réessayer.",
+    "refresh": "Actualiser",
+    "keysAxis": "Frappes",
+    "clicksAxis": "Clics de souris",
+    "scrollsAxis": "Défilements",
+    "distanceKmAxis": "Distance (km)",
+    "distanceMiAxis": "Distance (miles)",
+    "downloadAxis": "Téléchargement (MB)",
+    "uploadAxis": "Téléversement (MB)",
+    "uptimeAxis": "Temps actif (heures)",
+    "pulsesAxis": "Impulsions",
+    "generic": "Valeur"
+  },
+  
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "noData": "Aucune donnée disponible",
+    "search": "Rechercher",
+    "showing": "Affichage",
+    "dataFor": "données pour",
+    "team": "Équipe",
+    "searchFilter": "Filtre de recherche",
+    "none": "Aucun",
+    "week": "Semaine",
+    "to": "à",
+    "size": "Taille",
+    "loadingData": "Chargement des données...",
+    "errorLoadingData": "Erreur lors du chargement des données",
+    "apply": "Appliquer",
+    "copy": "Copier",
+    "copied": "Copié!",
+    "pageLoadedIn": "Page chargée en",
+    "approx50ms": "≈50ms",
+    "localStorageInfo": "Stockage local du navigateur",
+    "key": "Clé",
+    "type": "Type",
+    "notAvailable": "Non Disponible",
+    "period": "Période",
+    "clearLocalStorage": "Vider le stockage local"
+  },
+
+  "period": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "thisWeek": "Cette semaine",
+    "lastWeek": "Semaine dernière",
+    "thisMonth": "Ce mois",
+    "lastMonth": "Mois dernier",
+    "thisYear": "Cette année",
+    "lastYear": "Année dernière",
+    "current": "Actuel",
+    "previous": "Précédent",
+    "all": "Tout le temps"
+  },
+  
+  "stats": {
+    "username": "Nom d'utilisateur",
+    "keys": "Touches",
+    "clicks": "Clics",
+    "scrolls": "Défilements",
+    "distance": "Distance",
+    "download": "Téléchargement",
+    "upload": "Téléversement",
+    "uptime": "Temps actif",
+    "pulses": "Impulsions",
+    "rank": "Rang",
+    "total": "Total",
+    "users": "utilisateurs",
+    "team": "Équipe",
+    "usernameDescription": "Nom du compte utilisateur"
+  },
+
+  "popovers": {
+    "userDetails": "Détails de l'utilisateur",
+    "lastActivity": "Dernière activité",
+    "downloadVolume": "Volume de téléchargement",
+    "uploadVolume": "Volume de téléversement",
+    "uptime": "Temps actif",
+    "pulses": "Informations sur les impulsions",
+    "lastPulse": "Dernière impulsion",
+    "valueChange": "Changement de valeur",
+    "rank": "Rang",
+    "rankChange": "Changement de rang",
+    "better": "(meilleur)",
+    "worse": "(pire)",
+    "same": "identique",
+    "change": "Changement"
+  },
+
+  "pagination": {
+    "showing": "Affichage",
+    "of": "sur",
+    "items": "éléments",
+    "itemsPerPage": "Éléments par page"
+  },
+
+  "units": {
+    "toggle": "Basculer entre métrique et impérial",
+    "metric": "Métrique",
+    "imperial": "Impérial",
+    "hours": "heures"
+  },
+
+  "datepicker": {
+    "weekdays": "Lu,Ma,Me,Je,Ve,Sa,Di",
+    "months": "Jan,Fév,Mar,Avr,Mai,Juin,Juil,Aoû,Sep,Oct,Nov,Déc",
+    "weekLabel": "Semaine",
+    "format": "jj/mm/aaaa"
+  },
+
+  "dateFormat": {
+    "dd-mm-jjjj": "jj/mm/aaaa",
+    "tt.mm.jjjj": "jj/mm/aaaa",
+    "jj/mm/aaaa": "jj/mm/aaaa",
+    "dd/mm/aaaa": "jj/mm/aaaa",
+    "mm/dd/yyyy": "jj/mm/aaaa"
+  },
+  
+  "xml": {
+    "changes": "Changements",
+    "dailyChanges": "Changements Quotidiens",
+    "weeklyChanges": "Changements Hebdomadaires", 
+    "monthlyChanges": "Changements Mensuels",
+    "yearlyChanges": "Changements Annuels",
+    "overallChanges": "Changements Globaux",
+    "addedUsers": "Utilisateurs Ajoutés",
+    "leftUsers": "Utilisateurs Partis",
+    "leftUsersTitle": "Date de départ",
+    "changedUsers": "Utilisateurs Modifiés",
+    "oldUsername": "Ancien Nom d'utilisateur",
+    "newUsername": "Nouveau Nom d'utilisateur",
+    "date": "Date",
+    "loadFailed": "Échec du chargement des données de modifications",
+    "noChanges": "Aucune modification détectée pour cette période",
+    "showDetails": "Afficher les Détails",
+    "hideDetails": "Masquer les Détails",
+    "daily": "Quotidien",
+    "weekly": "Hebdomadaire",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "noDataFound": "Aucune donnée XML trouvée pour cette période",
+    "filters": {
+      "top": "Top",
+      "other": "Autre",
+      "team": "Équipe"
+    }
+  }
+}

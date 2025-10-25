@@ -1,0 +1,896 @@
+.stats-table-container {
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  font-size: 0.75rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.375rem;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  
+  // CSS content-visibility for performance
+  content-visibility: auto;
+  contain-intrinsic-size: auto 600px;
+  
+  // Minimal height when loading
+  &:empty, &:has(.spinner-border) {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .table {
+    margin-bottom: 0;
+    border: 1px solid var(--bs-border-color);
+    color: inherit; // Ensure text inherits proper contrast color
+    table-layout: fixed;
+    width: 100%;
+    background-color: var(--bs-body-bg);
+
+    th, td {
+      border: 1px solid var(--bs-border-color);
+      font-size: 0.75rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      color: var(--bs-body-color);
+    }
+
+    thead th {
+      background-color: var(--bs-tertiary-bg);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    thead.table-primary th {
+      background-color: var(--bs-primary);
+      color: #ffffff;
+    }
+
+    thead.table-light th {
+      background-color: var(--bs-light);
+      color: var(--bs-body-color);
+    }
+    
+    tbody tr:nth-of-type(odd) {
+      background-color: var(--bs-tertiary-bg);
+    }
+
+    tbody tr:nth-of-type(even) {
+      background-color: var(--bs-body-bg);
+    }
+  }
+
+  .bg-primary {
+    background-color: var(--bs-primary);
+    color: var(--bs-primary-text-emphasis);
+  }
+
+  .bg-light {
+    background-color: var(--bs-light);
+    color: var(--bs-body-color);
+  }
+}
+
+.stats-table {
+  width: 100%;
+}
+
+.loading-shade {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-container, .no-data-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.error-message {
+  color: #f44336;
+}
+
+.no-data-message {
+  color: #757575;
+}
+
+.sortable {
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  .fa-solid {
+    margin-left: 5px;
+    opacity: 0.5;
+  }
+
+  .fa-sort-up, .fa-sort-down {
+    opacity: 1;
+  }
+}
+
+.table {
+  margin-bottom: 0;
+  border: none; // Remove outer border - container has the border
+  border-collapse: collapse;
+
+  th, td {
+    border-top: 1px solid var(--bs-border-color);
+    border-bottom: 1px solid var(--bs-border-color);
+    border-left: none;
+    border-right: none;
+    font-size: 0.75rem; // Reduced font size for table cells
+  }
+  
+  // Remove top border from first row
+  thead tr:first-child th {
+    border-top: none;
+  }
+  
+  // Remove bottom border from last row
+  tbody tr:last-child td,
+  tfoot tr:last-child td {
+    border-bottom: none;
+  }
+
+  th {
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  td {
+    padding-top: 0.3rem; // Adjusted padding for smaller font
+    padding-bottom: 0.3rem;
+  }
+
+  td {
+    max-width: 250px;
+    overflow: hidden;
+  }
+}
+
+// Fix Math not found error
+:host {
+  --Math-ceil: 0; // Dummy variable to make Angular happy
+}
+
+// Smaller text for no data and loading messages
+.text-center, .alert {
+  font-size: 0.75rem; // Reduced font size for alerts and loading messages
+}
+
+// Better contrast for alerts in light mode
+.alert {
+  background-color: var(--bs-primary-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+  
+  &.alert-primary {
+    background-color: rgba(44, 62, 80, 0.1); // Flatly primary
+    border-color: rgba(44, 62, 80, 0.3);
+    color: var(--bs-body-color);
+  }
+  
+  &.alert-danger {
+    background-color: rgba(231, 76, 60, 0.1); // Flatly danger
+    border-color: rgba(231, 76, 60, 0.3);
+    color: var(--bs-danger);
+  }
+  
+  &.alert-info {
+    background-color: var(--bs-info-bg-subtle);
+    border-color: var(--bs-info-border-subtle);
+    color: var(--bs-info-text-emphasis);
+  }
+  
+  &.alert-light {
+    background-color: var(--bs-light);
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+  }
+}
+
+/* Responsive table styles */
+@media(max-width: 1200px) {
+  .mat-column-pulses, 
+  .mat-column-upload {
+    display: none;
+  }
+}
+
+@media(max-width: 992px) {
+  .mat-column-distance,
+  .mat-column-uptime {
+    display: none;
+  }
+}
+
+@media(max-width: 768px) {
+  .mat-column-keys,
+  .mat-column-scrolls,
+  .mat-column-download {
+    display: none;
+  }
+
+  /* Make smaller badges for mobile view */
+  td .d-flex.align-items-center > div .badge {
+    font-size: 0.6rem;
+    padding: 3px 4px;
+  }
+
+  /* Adjust XML badge width for mobile */
+  .badge.bg-info {
+    min-width: 35px;
+  }
+}
+
+@media(max-width: 576px) {
+  .mat-column-id {
+    display: none;
+  }
+}
+
+// Theme-specific styles - gebruik donkerder grijs
+:host-context(html[data-bs-theme='dark']) {
+  .stats-table-container {
+    border-color: #495057 !important;
+    
+    .table {
+      border-color: #495057 !important;
+      
+      th, td {
+        border-color: #495057 !important;
+      }
+    }
+  }
+
+  .username-link {
+    color: #18bc9c !important;
+
+    &:hover {
+      color: white !important;
+    }
+  }
+  
+  tfoot tr td {
+    border-top-color: #495057 !important;
+  }
+}
+
+/* Style for the totals row */
+tfoot {
+  tr {
+    td {
+      border-top: 2px solid var(--bs-border-color);
+      font-weight: 600;
+      font-size: 0.75rem; // Reduced font size for totals row
+    }
+  }
+}
+
+.cursor-help {
+  cursor: help;
+}
+
+// Single, consolidated popover style
+::ng-deep .stats-popover {
+  max-width: 300px;
+
+  .popover-body {
+    padding: 10px;
+    font-size: 0.75rem; // Reduced font size for popover content
+
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    .text-success {
+      color: var(--bs-success) !important;
+    }
+
+    .text-danger {
+      color: var(--bs-danger) !important;
+    }
+  }
+}
+
+.popover {
+  max-width: 300px;
+}
+
+// Style the popover
+::ng-deep .user-popover {
+  max-width: 300px;
+
+  .popover-body {
+    padding: 10px;
+    font-size: 0.75rem; // Reduced font size for popover content
+
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    .text-success {
+      color: var(--bs-success) !important;
+    }
+
+    .text-danger {
+      color: var(--bs-danger) !important;
+    }
+  }
+}
+
+:host ::ng-deep .popover-content {
+  max-width: 300px;
+
+  .popover-body {
+    padding: 10px;
+
+    p {
+      margin-bottom: 0.5rem;
+    }
+
+    .text-success {
+      color: #18bc9c !important; /* Flatly success green */
+    }
+
+    .text-danger {
+      color: #e74c3c !important; /* Flatly danger red */
+    }
+  }
+}
+
+.position-relative {
+  position: relative;
+}
+
+/* Badge positioning within table cells */
+.d-flex.align-items-center {
+  justify-content: space-between;
+  width: 100%;
+  max-height: 2.5rem;
+  align-items: center;
+}
+
+/* Badge styling */
+.badge {
+  font-size: 0.6rem;
+  margin-left: 2px;
+  padding: 3px 4px;
+  min-width: 48px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Special badge (PULSE) */
+.badge-light {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+/* Badge colors for better visibility in light mode */
+:host-context(html[data-bs-theme='light']) {
+  .badge.bg-warning {
+    background-color: #f39c12 !important; /* Flatly warning (oranje) */
+    color: #ffffff !important;
+    
+    i, .fa-solid, .fa-star {
+      color: #ffffff !important;
+    }
+  }
+  
+  .badge.bg-secondary {
+    background-color: #95a5a6 !important; /* Flatly secondary (grijs) */
+    color: #ffffff !important;
+    
+    i, .fa-solid, .fa-minus {
+      color: #ffffff !important;
+    }
+  }
+  
+  .badge.bg-success {
+    i, .fa-solid, .fa-arrow-up {
+      color: #ffffff !important;
+    }
+  }
+  
+  .badge.bg-danger {
+    i, .fa-solid, .fa-arrow-down {
+      color: #ffffff !important;
+    }
+  }
+}
+
+/* Badge colors for better visibility in dark mode */
+:host-context(html[data-bs-theme='dark']) {
+  .badge.bg-warning {
+    background-color: #f39c12 !important; /* Flatly warning (oranje) */
+    color: #ffffff !important;
+  }
+  
+  .badge.bg-secondary {
+    background-color: #95a5a6 !important; /* Flatly secondary (grijs) */
+    color: #ffffff !important;
+    
+    i, .fa-solid, .fa-minus, .fa-star {
+      color: #ffffff !important;
+    }
+  }
+  
+  .badge.bg-success {
+    color: #ffffff !important;
+    
+    i, .fa-solid, .fa-arrow-up {
+      color: #ffffff !important;
+    }
+  }
+  
+  .badge.bg-danger {
+    color: #ffffff !important;
+    
+    i, .fa-solid, .fa-arrow-down {
+      color: #ffffff !important;
+    }
+  }
+}
+
+.newpulse {
+  height: 10px; /* Smaller height to match other badges */
+  width: 32px; /* Smaller width to match other badges */
+}
+
+.newpulse .pulse {
+  font-size: 6px; /* Smaller font size to match other badges */
+}
+
+.rec {
+  rx: 4px; /* Smaller corner radius */
+  ry: 4px;
+}
+
+/* Ensure badges fit well within table cells */
+td .d-flex.align-items-center > div .badge {
+  font-size: 0.6rem; /* Consistent smaller font size */
+  padding: 3px 4px; /* Adjusted padding */
+}
+
+/* XML badge styling */
+.badge.bg-info {
+  font-size: 0.6rem; /* Reduced font size for XML badges */
+  padding: 3px 4px; /* Consistent zero padding */
+  min-width: 36px; /* Reduced minimum width */
+  text-align: center;
+}
+
+/* Rank change badges */
+.badge.bg-success,
+.badge.bg-danger,
+.badge.bg-secondary,
+.badge.bg-warning {
+  font-size: 0.6rem; /* Reduced font size for rank change badges */
+  padding: 3px 4px; /* Consistent zero padding */
+  min-width: 20px; /* Reduced minimum width */
+  text-align: center;
+}
+
+/* Special badge (PULSE) */
+.badge-light {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+
+:host ::ng-deep svg.newpulse,
+span.badge svg.newpulse,
+.badge-light svg.newpulse {
+  height: 10px !important; /* Smaller height to match other badges */
+  width: 32px !important; /* Smaller width to match other badges */
+  max-height: 10px !important;
+  max-width: 32px !important;
+  min-height: 10px !important;
+  min-width: 32px !important;
+}
+
+:host ::ng-deep svg.newpulse rect,
+span.badge svg.newpulse rect,
+.badge-light svg.newpulse rect {
+  height: 10px !important;
+  width: 32px !important;
+}
+
+:host ::ng-deep .newpulse .pulse,
+span.badge .newpulse .pulse,
+.badge-light .newpulse .pulse {
+  font-size: 6px !important; /* Smaller font size to match other badges */
+}
+
+.rec {
+  rx: 4px !important; /* Smaller corner radius */
+  ry: 4px !important;
+}
+
+/* Ensure badges fit well within table cells */
+td .d-flex.align-items-center > div .badge {
+  font-size: 0.6rem; /* Consistent smaller font size */
+  padding: 3px 4px; /* Consistent zero padding */
+}
+
+/* Animation for arrows */
+.fa-bounce {
+  animation: fa-bounce-up 1s infinite;
+}
+
+.fa-bounce-down {
+  animation: fa-bounce-down 1s infinite;
+}
+
+@keyframes fa-bounce-up {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes fa-bounce-down {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(5px);
+  }
+  60% {
+    transform: translateY(3px);
+  }
+}
+
+/* Badge alternating animation moved to global styles.scss */
+
+/* Fix badges appearing outside table cells */
+.position-absolute.top-0.start-100.translate-middle {
+  top: 10px !important;
+  left: 80% !important;
+  transform: none !important;
+  z-index: 1;
+}
+
+/* Adjust badge positions for better visibility */
+.position-absolute.top-0.start-100.translate-middle {
+  transform: translate(-50%, -50%);
+  margin-left: 10px;
+}
+
+/* Team name styling with enhanced visibility in both themes */
+.pull-right {
+  float: right;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.small {
+  font-size: 80%;
+  font-weight: 600; /* Make it bold */
+}
+
+/* Force specific colors with !important to override any inherited styles */
+:host-context(html[data-bs-theme='light']) {
+  td .pull-right.small {
+    color: #2c3e50 !important; /* Flatly primary - visible on light bg */
+  }
+
+  th .pull-right.small {
+    color: #212529 !important; /* Flatly body text - visible in light theme */
+  }
+}
+
+:host-context(html[data-bs-theme='dark']) {
+  td .pull-right.small {
+    color: #ffffff !important; /* White for better distinction from username link */
+    opacity: 0.8;
+  }
+
+  th .pull-right.small {
+    color: #ecf0f1 !important; /* Flatly light gray for dark theme */
+  }
+}
+
+/* Key column specific badge styling */
+
+/* Ensure content doesn't overflow on small screens */
+.table td {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Make sure rank badges are visually distinct from XML badges */
+td .badge.bg-success,
+td .badge.bg-danger,
+td .badge.bg-secondary,
+td .badge.bg-warning {
+  min-width: 24px;
+  text-align: center;
+}
+
+/* Ensure the table fills available space without overflow */
+@media (min-width: 992px) {
+  .table-responsive {
+    overflow-x: visible !important;
+  }
+}
+
+/* Column width settings - updated selector to target columns directly */
+.table {
+  /* Rank column */
+  th:nth-child(1), td:nth-child(1) {
+    width: 60px !important;
+    max-width: 60px !important;
+    text-align: left !important;
+  }
+
+  /* Username column */
+  th:nth-child(2), td:nth-child(2) {
+    width: 150px !important;
+    max-width: 150px !important;
+    text-align: left !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Keys column */
+  th:nth-child(3), td:nth-child(3) {
+    width: 90px !important;
+    max-width: 90px !important;
+    text-align: right !important;
+  }
+
+  /* Clicks column */
+  th:nth-child(4), td:nth-child(4) {
+    width: 90px !important;
+    max-width: 90px !important;
+    text-align: right !important;
+  }
+
+  /* Scrolls column */
+  th:nth-child(5), td:nth-child(5) {
+    width: 90px !important;
+    max-width: 90px !important;
+    text-align: right !important;
+  }
+
+  /* Distance column */
+  th:nth-child(6), td:nth-child(6) {
+    width: 100px !important;
+    max-width: 100px !important;
+    text-align: right !important;
+  }
+
+  /* Download column */
+  th:nth-child(7), td:nth-child(7) {
+    width: 100px !important;
+    max-width: 100px !important;
+    text-align: right !important;
+  }
+
+  /* Upload column */
+  th:nth-child(8), td:nth-child(8) {
+    width: 100px !important;
+    max-width: 100px !important;
+    text-align: right !important;
+  }
+
+  /* Uptime column */
+  th:nth-child(9), td:nth-child(9) {
+    width: 100px !important;
+    max-width: 100px !important;
+    text-align: right !important;
+  }
+
+  /* Pulses column */
+  th:nth-child(10), td:nth-child(10) {
+    width: 60px !important;
+    max-width: 60px !important;
+    text-align: left !important;
+  }
+}
+
+/* Remove the old, unused column classes */
+/* th.pulses-column, td.pulses-column,
+th.rank-column, td.rank-column,
+th.username-column, td.username-column,
+th.keys-column, td.keys-column,
+... etc ... */
+
+/* Ensure content doesn't overflow on small screens */
+.table td {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure the table fills available space without overflow */
+@media (min-width: 992px) {
+  .table-responsive {
+    overflow-x: visible !important;
+  }
+}
+
+// Default username styling
+.username-link {
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Highlight style for search terms */
+:host ::ng-deep .highlight {
+  background-color: rgba(255, 193, 7, 0.5);
+  font-weight: bold;
+  padding: 0.1rem 0.05rem;
+  border-radius: 2px;
+}
+
+/* Color override for secondary badges */
+.bg-secondary .fa-solid, .fas {
+  color: #ccc;
+}
+
+.btn-sm, .btn-group-sm > .btn {
+  --bs-btn-font-size: 0.5rem;
+}
+
+// Enhanced pagination styling for Flatly theme compatibility
+.pagination {
+  margin-bottom: 0;
+  
+  .page-link {
+    color: var(--bs-body-color);
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      color: var(--bs-primary);
+      background-color: var(--bs-secondary-bg);
+      border-color: var(--bs-primary);
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25); // Flatly primary
+    }
+  }
+  
+  .page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: #ffffff;
+  }
+  
+  .page-item.disabled .page-link {
+    color: var(--bs-secondary-color);
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+  }
+}
+
+// Styles for items per page dropdown
+.form-select-sm {
+  color: var(--bs-body-color);
+  background-color: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+  transition: all 0.2s ease;
+  
+  &:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(44, 62, 80, 0.25); // Flatly primary
+  }
+  
+  &:hover {
+    border-color: var(--bs-primary);
+  }
+  
+  option {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+  }
+}
+
+// Pagination info text
+.pagination-info {
+  color: var(--bs-secondary-color);
+  font-size: 0.875rem;
+}
+
+// Dark mode specific adjustments using Flatly colors
+:host-context([data-bs-theme="dark"]) {
+  .pagination {
+    .page-link {
+      color: #ecf0f1;
+      background-color: #343a40;
+      border-color: #495057;
+      
+      &:hover {
+        color: #fff;
+        background-color: #2c3e50;
+      }
+    }
+    
+    .page-item.active .page-link {
+      background-color: #2c3e50;
+      border-color: #2c3e50;
+    }
+    
+    .page-item.disabled .page-link {
+      color: #95a5a6;
+      background-color: #343a40;
+      border-color: #495057;
+    }
+  }
+  
+  .form-select-sm {
+    background-color: #343a40;
+    border-color: #495057;
+    color: #ecf0f1;
+    
+    option {
+      background-color: #343a40;
+      color: #ecf0f1;
+    }
+  }
+}
+
+/* Page size selector specific styling */
+.items-per-page-container {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+  
+  label {
+    margin-right: 0.5rem;
+    color: var(--bs-body-color);
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+  
+  select.form-select-sm {
+    width: auto;
+    min-width: 70px;
+    padding-right: 1.75rem;
+    
+    /* Custom dropdown arrow that works with both themes */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23adb5bd' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 16px 12px;
+  }
+}
+
+:host-context([data-bs-theme="dark"]) {
+  .items-per-page-container select.form-select-sm {
+    /* Custom dropdown arrow for dark theme using Flatly light gray */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ecf0f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+  }
+}

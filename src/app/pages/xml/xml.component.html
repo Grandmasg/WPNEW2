@@ -1,0 +1,171 @@
+<div class="container" #xmlContainer>
+  <div style="padding-bottom: 1rem;"></div>
+  
+  <app-date-input-group 
+    [selectedDate]="selectedDate"
+    [offset]="offset"
+    viewType="xml"
+    (dateChange)="onDateChange($event)"
+    (offsetChange)="onOffsetChange($event)">
+  </app-date-input-group>
+  
+  <div class="content">
+    <div class="alert d-flex flex-wrap justify-content-between align-items-center"
+         [ngClass]="{'alert-primary': currentTheme === 'dark', 'alert-light': currentTheme === 'light'}">
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-regular fa-calendar"></i> {{ 'common.showing' | translate }} <strong>{{ xmlViewLabel }} XML</strong> {{ 'common.dataFor' | translate }}: 
+        <strong>
+          <ng-container *ngIf="startDate && endDate">
+            {{ startDate }} - {{ endDate }}
+          </ng-container>
+          <ng-container *ngIf="!(startDate && endDate)">
+            {{ getFormattedDate() }}
+          </ng-container>
+        </strong>
+      </div>
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-solid fa-users"></i> {{ 'common.team' | translate }}: <strong>{{ teamname === '-' ? ('nav.all' | translate) : teamname }}</strong>
+      </div>
+      <div class="mb-1 mb-md-0">
+        <i class="fa-solid fa-search"></i> {{ 'common.searchFilter' | translate }}: <strong>{{ searchText || ('common.none' | translate) }}</strong>
+      </div>
+    </div>
+    
+    <!-- Loading indicator -->
+    <div *ngIf="isLoading" class="text-center p-5">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+      </div>
+      <p class="mt-2">{{ 'common.loadingData' | translate }}</p>
+    </div>
+    
+    <!-- Error message -->
+    <div *ngIf="hasError" class="alert alert-danger">
+      <i class="fa-solid fa-exclamation-triangle me-2"></i>
+      {{ 'common.errorLoadingData' | translate }}
+    </div>
+    
+    <!-- No data message -->
+    <div *ngIf="!isLoading && !hasError && !xml" class="alert alert-info">
+      <i class="fa-solid fa-info-circle me-2"></i>
+      {{ 'xml.noDataFound' | translate }}
+    </div>
+    
+    <!-- XML Content View -->
+    <div *ngIf="!isLoading && !hasError" class="card mt-3">
+      <div class="card-header d-flex align-items-center justify-content-between flex-wrap">
+        <div class="d-flex align-items-center">
+          <h5 class="mb-0 me-3">{{ xmlViewLabel }} XML</h5>
+        </div>
+        
+        <!-- XML Filters - Added here in the card header between title and buttons -->
+        <div class="d-flex align-items-center flex-row flex-wrap gap-2">
+          <div class="input-group input-group-sm filter-group" style="width: 140px;">
+            <span class="input-group-text" style="width: 70px;">{{ 'xml.filters.top' | translate }}</span>
+            <select class="form-select form-select-sm" [(ngModel)]="topnr">
+              <option *ngFor="let option of topnrOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+          <div class="input-group input-group-sm filter-group" style="width: 140px;">
+            <span class="input-group-text" style="width: 70px;">{{ 'xml.filters.other' | translate }}</span>
+            <select class="form-select form-select-sm" [(ngModel)]="othernr">
+              <option *ngFor="let option of othernrOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+          <div class="input-group input-group-sm filter-group" style="width: 140px;">
+            <span class="input-group-text" style="width: 70px;">{{ 'xml.filters.team' | translate }}</span>
+            <select class="form-select form-select-sm" [(ngModel)]="teamnr">
+              <option *ngFor="let option of teamnrOptions" [value]="option">{{ option }}</option>
+            </select>
+          </div>
+          <button class="btn btn-sm" 
+                  [ngClass]="{'btn-primary': currentTheme === 'dark', 'btn-dark': currentTheme === 'light'}"
+                  (click)="applyFilters()">
+            <i class="fa-solid fa-check"></i> {{ 'common.apply' | translate }}
+          </button>
+        </div>
+        
+        <!-- Add XML Type Selector Buttons -->
+        <div class="btn-group">
+          <button 
+            class="btn btn-sm" 
+            [ngClass]="{'btn-primary': xmlViewType === 'daily', 'btn-secondary': xmlViewType !== 'daily'}"
+            (click)="setXmlViewType('daily')">
+            {{ 'xml.daily' | translate }}
+          </button>
+          <button 
+            class="btn btn-sm" 
+            [ngClass]="{'btn-primary': xmlViewType === 'weekly', 'btn-secondary': xmlViewType !== 'weekly'}"
+            (click)="setXmlViewType('weekly')">
+            {{ 'xml.weekly' | translate }}
+          </button>
+          <button 
+            class="btn btn-sm" 
+            [ngClass]="{'btn-primary': xmlViewType === 'monthly', 'btn-secondary': xmlViewType !== 'monthly'}"
+            (click)="setXmlViewType('monthly')">
+            {{ 'xml.monthly' | translate }}
+          </button>
+          <button 
+            class="btn btn-sm" 
+            [ngClass]="{'btn-primary': xmlViewType === 'yearly', 'btn-secondary': xmlViewType !== 'yearly'}"
+            (click)="setXmlViewType('yearly')">
+            {{ 'xml.yearly' | translate }}
+          </button>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <!-- Single XML view when not split -->
+        <div *ngIf="!isSplit">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">XML <small class="text-muted">({{ formatByteSize(originalXmlByteSize) }})</small></h5>
+            <button class="btn btn-sm" 
+                    [ngClass]="{'btn-outline-light': currentTheme === 'dark', 'btn-outline-dark': currentTheme === 'light'}"
+                    (click)="copyToClipboard(xml)">
+              <i class="fa-solid" [ngClass]="{'fa-copy': !copy, 'fa-check text-success': copy}"></i> 
+              {{ copy ? ('common.copied' | translate) : ('common.copy' | translate) }}
+            </button>
+          </div>
+          <textarea class="form-control xml-content" [style.height]="textareaHeight" readonly>{{ xml }}</textarea>
+        </div>
+        
+        <!-- Split XML view when too large -->
+        <div *ngIf="isSplit">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">Part 1 <small class="text-muted">({{ formatByteSize(originalSplitPart1ByteSize) }})</small></h5>
+            <button class="btn btn-sm" 
+                    [ngClass]="{'btn-outline-light': currentTheme === 'dark', 'btn-outline-dark': currentTheme === 'light'}"
+                    (click)="copyToClipboard(splitPart1)">
+              <i class="fa-regular" [ngClass]="{'fa-copy': !copyPart1, 'fa-check text-success': copyPart1}"></i> 
+              {{ copyPart1 ? ('common.copied' | translate) : ('common.copy' | translate) }}
+            </button>
+          </div>
+          <textarea class="form-control xml-content" [style.height]="textareaHeight" readonly>{{ splitPart1 }}</textarea>
+          
+          <div class="d-flex justify-content-between align-items-center mb-2 mt-3">
+            <h5 class="mb-0">Part 2 <small class="text-muted">({{ formatByteSize(originalSplitPart2ByteSize) }})</small></h5>
+            <button class="btn btn-sm" 
+                    [ngClass]="{'btn-outline-light': currentTheme === 'dark', 'btn-outline-dark': currentTheme === 'light'}"
+                    (click)="copyToClipboard(splitPart2)">
+              <i class="fa-regular" [ngClass]="{'fa-copy': !copyPart2, 'fa-check text-success': copyPart2}"></i> 
+              {{ copyPart2 ? ('common.copied' | translate) : ('common.copy' | translate) }}
+            </button>
+          </div>
+          <textarea class="form-control xml-content" [style.height]="textareaHeight" readonly>{{ splitPart2 }}</textarea>
+        </div>
+        
+        <!-- Type-specific loading indicators -->
+        <div *ngIf="(xmlViewType === 'daily' && isLoadingDaily) || 
+                   (xmlViewType === 'weekly' && isLoadingWeekly) ||
+                   (xmlViewType === 'monthly' && isLoadingMonthly) ||
+                   (xmlViewType === 'yearly' && isLoadingYearly)" 
+             class="text-center p-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+          </div>
+          <p class="mt-2">{{ 'common.loadingData' | translate }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,805 @@
+<div class="stats-table-container">
+  <!-- Loading indicator -->
+  <div class="text-center p-5" *ngIf="isLoading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading data...</p>
+  </div>
+  
+  <!-- Error message -->
+  <div class="alert alert-danger" *ngIf="hasError">
+    <i class="fa-solid fa-exclamation-triangle me-2"></i>
+    Error loading data. Please try again later.
+  </div>
+  
+  <!-- No data message -->
+  <div class="alert alert-info" *ngIf="!isLoading && !hasError && filteredData.length === 0">
+    <i class="fa-solid fa-info-circle me-2"></i>
+    No data available for the selected parameters.
+  </div>
+  
+  <!-- Data table -->
+  <div class="table-responsive" *ngIf="!isLoading && filteredData.length > 0">
+    <table class="stats-table table table-striped" [attr.data-sorting]="sortColumn + '-' + sortDirection">
+      <thead [ngClass]="{'table-primary': currentTheme === 'dark', 'table-light': currentTheme === 'light'}">
+        <tr>
+          <th class="sortable rank-column" 
+              (click)="sort('rank')" 
+              data-column="rank"
+              id="rank-header">
+            {{ 'stats.rank' | translate }}
+            <i class="fa-solid" 
+               [class.fa-sort]="sortColumn !== 'rank'"
+               [class.fa-sort-up]="sortColumn === 'rank' && sortDirection === 'asc'"
+               [class.fa-sort-down]="sortColumn === 'rank' && sortDirection === 'desc'"></i>
+          </th>
+          <th class="sortable" 
+              (click)="sort('username')" 
+              data-column="username"
+              id="username-header">
+            {{ 'stats.username' | translate }}
+            <i class="fa-solid" 
+               [class.fa-sort]="sortColumn !== 'username'"
+               [class.fa-sort-up]="sortColumn === 'username' && sortDirection === 'asc'"
+               [class.fa-sort-down]="sortColumn === 'username' && sortDirection === 'desc'"></i>
+            <div class="pull-right small">{{ 'stats.team' | translate }}</div>
+          </th>
+          <th class="sortable" 
+              (click)="sort('keys')" 
+              data-column="keys"
+              id="keys-header">
+            {{ 'stats.keys' | translate }}
+            <i class="fa-solid" 
+               [class.fa-sort]="sortColumn !== 'keys'"
+               [class.fa-sort-up]="sortColumn === 'keys' && sortDirection === 'asc'"
+               [class.fa-sort-down]="sortColumn === 'keys' && sortDirection === 'desc'"></i>
+          </th>
+          <th class="sortable" 
+              (click)="sort('clicks')" 
+              data-column="clicks" 
+              id="clicks-header">
+              {{ 'stats.clicks' | translate }}
+              <i class="fa-solid" [ngClass]="getSortIcon('clicks')"></i>
+          </th>
+          <th class="sortable d-none d-md-table-cell" 
+              (click)="sort('scrolls')"
+              data-column="scrolls"
+              id="scrolls-header">
+            {{ 'stats.scrolls' | translate }}
+            <i class="fa-solid" [ngClass]="getSortIcon('scrolls')"></i>
+          </th>
+          <th class="sortable d-none d-lg-table-cell"
+              (click)="sort('distance')"
+              data-column="distance"
+              id="distance-header">
+            {{ 'stats.distance' | translate }}
+            <i class="fa-solid" [ngClass]="getSortIcon('distance')"></i>
+          </th>
+          <th class="sortable d-none d-md-table-cell"
+              (click)="sort('download')"
+              data-column="download"
+              id="download-header">
+            {{ 'stats.download' | translate }}
+            <i class="fa-solid" [ngClass]="getSortIcon('download')"></i>
+          </th>
+          <th class="sortable d-none d-xl-table-cell"
+              (click)="sort('upload')"
+              data-column="upload"
+              id="upload-header">
+            {{ 'stats.upload' | translate }}
+            <i class="fa-solid" [ngClass]="getSortIcon('upload')"></i>
+          </th>
+          <th class="sortable d-none d-lg-table-cell"
+              (click)="sort('uptime')"
+              data-column="uptime"
+              id="uptime-header">
+            {{ 'stats.uptime' | translate }}
+            <i class="fa-solid" [ngClass]="getSortIcon('uptime')"></i>
+          </th>
+          <th class="sortable pulses-column d-none d-xl-table-cell"
+              (click)="sort('pulses')"
+              data-column="pulses"
+              id="pulses-header">
+            {{ 'stats.pulses' | translate }}
+            <i class="fa-solid" [ngClass]="getSortIcon('pulses')"></i>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of paginatedData; let i = index">
+          <td class="rank-column" [ngbPopover]="rankPopover" 
+              [popoverContext]="{row: row, rank: (page - 1) * pageSize + i + 1}"
+              popoverTitle="Daily rank:" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ (page - 1) * pageSize + i + 1 }}</span>
+                  <div>
+                      <!-- Debug removed - badges are working correctly -->
+                      
+                      <!-- Priority 1: Check if user is in "Toegevoegde gebruikers" section -->
+                      <ng-container *ngIf="getBadgeType(row) === 'new-member'">
+                          <!-- NEW MEMBER badge (green) - BLIJFT ZOALS HET WAS! -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-user-plus user-plus-icon"></i> NEW
+                          </span>
+                      </ng-container>
+                      <ng-container *ngIf="getBadgeType(row) === 'new-pulse'">
+              <!-- NEW PULSE badge (cyan) - nu gewone CSS badge -->
+              <span class="badge bg-info text-white rounded-pill" style="font-size: 0.65rem; padding: 0.1rem 0.3rem;">
+                              NEW
+              </span>
+                      </ng-container>
+                      
+                      <!-- Priority 2: Show rank change badges only if NOT in "Toegevoegde gebruikers" -->
+                      <ng-container *ngIf="!getBadgeType(row)">
+                          <ng-container *ngIf="!row['yesterday'] && row['today']; else rankChanges">
+                              <!-- PULSE badge met afwisselende tekst NEW/PULSE -->
+                              <span class="badge bg-info text-white rounded-pill badge-alternating">
+                                  <span class="badge-text-1">NEW</span>
+                                  <span class="badge-text-2">PULSE</span>
+                              </span>
+                          </ng-container>
+                          <!-- Template for rank change badges (only shown if not new) -->
+                          <ng-template #rankChanges>
+                              <ng-container *ngIf="row['yesterday'] !== undefined && row['today'] !== undefined && row['yesterday'] !== null && row['today'] !== null">
+                                  <!-- Improved rank (yesterday value higher than today value means rank got better/lower) -->
+                                  <span *ngIf="(row['yesterday'] - row['today']) > 0" 
+                                        class="badge bg-success rounded-pill">
+                                      <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                      {{ Math.abs(row['yesterday'] - row['today']) }}
+                                  </span>
+                                  <!-- Worse rank (yesterday value lower than today value means rank got worse/higher) -->
+                                  <span *ngIf="(row['yesterday'] - row['today']) < 0" 
+                                        class="badge bg-danger rounded-pill">
+                                      <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                      {{ Math.abs(row['yesterday'] - row['today']) }}
+                                  </span>
+                                  <!-- Same rank (no change from yesterday) -->
+                                  <span *ngIf="row['yesterday'] === row['today']" 
+                                        class="badge bg-secondary rounded-pill">
+                                      <i class="fa-solid fa-minus"></i>
+                                  </span>
+                              </ng-container>
+                          </ng-template>
+                      </ng-container>
+                      
+                      <!-- Real-time activity pulse badge (shown alongside other badges) -->
+                      <span *ngIf="isRecentlyActive(row)" 
+                            class="badge rounded-pill badge-light ms-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="newpulse" style="height: 10px !important; width: 32px !important; max-height: 10px; max-width: 32px;" height="10" width="32" viewBox="0 0 32 10">
+                              <rect fill="#EFBB07" stroke="#000000" x="0" y="0" width="32" height="10" rx="4" style="height: 10px; width: 32px;"></rect>
+                              <text x="50%" y="57%" dominant-baseline="middle" text-anchor="middle" fill="#000000" font-family="Trebuchet MS" font-size="6" style="font-size: 6px;">PULSE</text>
+                          </svg>
+                      </span>
+                  </div>
+              </div>
+          </td>
+          <td [ngbPopover]="userPopover" 
+              [popoverContext]="{row: row}"
+              [popoverTitle]="'Last active: '" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help">
+              <span class="username-link" (click)="onUsernameClick(row)">
+                <span [innerHTML]="row['username'] | highlight: searchTerm"></span>
+              </span>
+              <div class="pull-right small" *ngIf="row['team'] || row['Team']">{{ row['team'] || row['Team'] }}</div>
+          </td>
+          <td [ngbPopover]="keysPopover" 
+              [popoverContext]="{row: row}"
+              popoverTitle="Keys Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ viewType === 'daily' ? formatNumber(row.keys || 0) : formatNumber(row.keys || 0) }}</span>
+                  <div>
+                      <!-- XML value badge -->
+                      <span *ngIf="row['KeysXML'] !== undefined && row['KeysXML'] !== null" 
+                            class="badge bg-info rounded-pill">
+                          XML: {{ formatNumber(row['KeysXML']) }}
+                      </span>
+                      <!-- Make badges mutually exclusive with an ngIf/else pattern -->
+                      <ng-container *ngIf="!row['RankKeysYesterday'] && row['RankKeysToday']; else rankKeyChanges">
+                          <!-- NEW badge for new users - green star -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-star"></i>
+                          </span>
+                      </ng-container>
+                      <!-- Template for rank key change badges (only shown if not new) -->
+                      <ng-template #rankKeyChanges>
+                          <ng-container *ngIf="row['RankKeysYesterday'] !== undefined && row['RankKeysToday'] !== undefined && 
+                                              row['RankKeysYesterday'] !== null && row['RankKeysToday'] !== null">
+                              <!-- Improved rank (yesterday value higher than today value means rank got better/lower) -->
+                              <span *ngIf="(row['RankKeysYesterday'] - row['RankKeysToday']) > 0" 
+                                    class="badge bg-success rounded-pill">
+                                  <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                  {{ Math.abs(row['RankKeysYesterday'] - row['RankKeysToday']) }}
+                              </span>
+                              <!-- Worse rank (yesterday value lower than today value means rank got worse/higher) -->
+                              <span *ngIf="(row['RankKeysYesterday'] - row['RankKeysToday']) < 0" 
+                                    class="badge bg-danger rounded-pill">
+                                  <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                  {{ Math.abs(row['RankKeysYesterday'] - row['RankKeysToday']) }}
+                              </span>
+                              <!-- Same rank (no change from yesterday) -->
+                              <span *ngIf="row['RankKeysYesterday'] === row['RankKeysToday']" 
+                                    class="badge bg-secondary rounded-pill">
+                                  <i class="fa-solid fa-minus"></i>
+                              </span>
+                          </ng-container>
+                      </ng-template>
+                  </div>
+              </div>
+          </td>
+          <td [ngbPopover]="clicksPopover" 
+              [popoverContext]="{row: row}"
+              popoverTitle="Clicks Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ formatNumber(row.clicks) }}</span>
+                  <div>
+                      <!-- XML value badge -->
+                      <span *ngIf="row['ClicksXML'] !== undefined && row['ClicksXML'] !== null" 
+                            class="badge bg-info rounded-pill">
+                          XML: {{ formatNumber(row['ClicksXML']) }}
+                      </span>
+                      <!-- Make badges mutually exclusive with an ngIf/else pattern -->
+                      <ng-container *ngIf="!row['RankClicksYesterday'] && row['RankClicksToday']; else rankClicksChanges">
+                          <!-- NEW badge for new users - green star -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-star"></i>
+                          </span>
+                      </ng-container>
+                      <!-- Template for rank key change badges (only shown if not new) -->
+                      <ng-template #rankClicksChanges>
+                          <ng-container *ngIf="row['RankClicksYesterday'] !== undefined && row['RankClicksToday'] !== undefined && 
+                                              row['RankClicksYesterday'] !== null && row['RankClicksToday'] !== null">
+                              <!-- Improved rank (yesterday value higher than today value means rank got better/lower) -->
+                              <span *ngIf="(row['RankClicksYesterday'] - row['RankClicksToday']) > 0" 
+                                    class="badge bg-success rounded-pill">
+                                  <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                  {{ Math.abs(row['RankClicksYesterday'] - row['RankClicksToday']) }}
+                              </span>
+                              <!-- Worse rank (yesterday value lower than today value means rank got worse/higher) -->
+                              <span *ngIf="(row['RankClicksYesterday'] - row['RankClicksToday']) < 0" 
+                                    class="badge bg-danger rounded-pill">
+                                  <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                  {{ Math.abs(row['RankClicksYesterday'] - row['RankClicksToday']) }}
+                              </span>
+                              <!-- Same rank (no change from yesterday) -->
+                              <span *ngIf="row['RankClicksYesterday'] === row['RankClicksToday']" 
+                                    class="badge bg-secondary rounded-pill">
+                                  <i class="fa-solid fa-minus"></i>
+                              </span>
+                          </ng-container>
+                      </ng-template>
+                  </div>
+              </div>
+          </td>
+          <td class="d-none d-md-table-cell"
+              [ngbPopover]="scrollsPopover" 
+              [popoverContext]="{row: row}"
+              popoverTitle="Scrolls Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ formatNumber(row.scrolls) }}</span>
+                  <div>
+                      <!-- XML value badge -->
+                      <span *ngIf="row['ScrollsXML'] !== undefined && row['ScrollsXML'] !== null" 
+                            class="badge bg-info rounded-pill">
+                          XML: {{ formatNumber(row['ScrollsXML']) }}
+                      </span>
+                      <!-- Make badges mutually exclusive with an ngIf/else pattern -->
+                      <ng-container *ngIf="!row['RankScrollsYesterday'] && row['RankScrollsToday']; else rankScrollsChanges">
+                          <!-- NEW badge for new users - green star -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-star"></i>
+                          </span>
+                      </ng-container>
+                      <!-- Template for rank change badges -->
+                      <ng-template #rankScrollsChanges>
+                          <ng-container *ngIf="row['RankScrollsYesterday'] !== undefined && row['RankScrollsToday'] !== undefined && 
+                                              row['RankScrollsYesterday'] !== null && row['RankScrollsToday'] !== null">
+                              <!-- Improved rank -->
+                              <span *ngIf="(row['RankScrollsYesterday'] - row['RankScrollsToday']) > 0" 
+                                    class="badge bg-success rounded-pill">
+                                  <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                  {{ Math.abs(row['RankScrollsYesterday'] - row['RankScrollsToday']) }}
+                              </span>
+                              <!-- Worse rank -->
+                              <span *ngIf="(row['RankScrollsYesterday'] - row['RankScrollsToday']) < 0" 
+                                    class="badge bg-danger rounded-pill">
+                                  <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                  {{ Math.abs(row['RankScrollsYesterday'] - row['RankScrollsToday']) }}
+                              </span>
+                              <!-- Same rank -->
+                              <span *ngIf="row['RankScrollsYesterday'] === row['RankScrollsToday']" 
+                                    class="badge bg-secondary rounded-pill">
+                                  <i class="fa-solid fa-minus"></i>
+                              </span>
+                          </ng-container>
+                      </ng-template>
+                  </div>
+              </div>
+          </td>
+          <td class="d-none d-lg-table-cell"
+              [ngbPopover]="distancePopover" 
+              [popoverContext]="{row: row}"
+              popoverTitle="Distance Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ formatDistance(row.distance) }}</span>
+                  <div>
+                      <!-- XML value badge -->
+                      <span *ngIf="row['DistanceXML'] !== undefined && row['DistanceXML'] !== null" 
+                            class="badge bg-info rounded-pill">
+                          XML: {{ formatDistance(row['DistanceXML']) }}
+                      </span>
+                      <!-- Make badges mutually exclusive with an ngIf/else pattern -->
+                      <ng-container *ngIf="!row['RankDistanceYesterday'] && row['RankDistanceToday']; else rankDistanceChanges">
+                          <!-- NEW badge for new users - green star -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-star"></i>
+                          </span>
+                      </ng-container>
+                      <!-- Template for rank change badges -->
+                      <ng-template #rankDistanceChanges>
+                          <ng-container *ngIf="row['RankDistanceYesterday'] !== undefined && row['RankDistanceToday'] !== undefined && 
+                                              row['RankDistanceYesterday'] !== null && row['RankDistanceToday'] !== null">
+                              <!-- Improved rank -->
+                              <span *ngIf="(row['RankDistanceYesterday'] - row['RankDistanceToday']) > 0" 
+                                    class="badge bg-success rounded-pill">
+                                  <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                  {{ Math.abs(row['RankDistanceYesterday'] - row['RankDistanceToday']) }}
+                              </span>
+                              <!-- Worse rank -->
+                              <span *ngIf="(row['RankDistanceYesterday'] - row['RankDistanceToday']) < 0" 
+                                    class="badge bg-danger rounded-pill">
+                                  <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                  {{ Math.abs(row['RankDistanceYesterday'] - row['RankDistanceToday']) }}
+                              </span>
+                              <!-- Same rank -->
+                              <span *ngIf="row['RankDistanceYesterday'] === row['RankDistanceToday']" 
+                                    class="badge bg-secondary rounded-pill">
+                                  <i class="fa-solid fa-minus"></i>
+                              </span>
+                          </ng-container>
+                      </ng-template>
+                  </div>
+              </div>
+          </td>
+          <td class="d-none d-md-table-cell"
+              [ngbPopover]="downloadPopover" 
+              [popoverContext]="{row: row}"
+              popoverTitle="Download Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ row.download ? formatBytes(+row.download * 1024 * 1024) : '0 B' }}</span>
+                  <div>
+                      <!-- XML value badge -->
+                      <span *ngIf="row['DownloadXML'] !== undefined && row['DownloadXML'] !== null" 
+                            class="badge bg-info rounded-pill">
+                          XML: {{ formatBytes(+row['DownloadXML'] * 1024 * 1024) }}
+                      </span>
+                      <!-- Make badges mutually exclusive with an ngIf/else pattern -->
+                      <ng-container *ngIf="!row['RankDownloadYesterday'] && row['RankDownloadToday']; else rankDownloadChanges">
+                          <!-- NEW badge for new users - green star -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-star"></i>
+                          </span>
+                      </ng-container>
+                      <!-- Template for rank change badges -->
+                      <ng-template #rankDownloadChanges>
+                          <ng-container *ngIf="row['RankDownloadYesterday'] !== undefined && row['RankDownloadToday'] !== undefined && 
+                                              row['RankDownloadYesterday'] !== null && row['RankDownloadToday'] !== null">
+                              <!-- Improved rank -->
+                              <span *ngIf="(row['RankDownloadYesterday'] - row['RankDownloadToday']) > 0" 
+                                    class="badge bg-success rounded-pill">
+                                  <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                  {{ Math.abs(row['RankDownloadYesterday'] - row['RankDownloadToday']) }}
+                              </span>
+                              <!-- Worse rank -->
+                              <span *ngIf="(row['RankDownloadYesterday'] - row['RankDownloadToday']) < 0" 
+                                    class="badge bg-danger rounded-pill">
+                                  <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                  {{ Math.abs(row['RankDownloadYesterday'] - row['RankDownloadToday']) }}
+                              </span>
+                              <!-- Same rank -->
+                              <span *ngIf="row['RankDownloadYesterday'] === row['RankDownloadToday']" 
+                                    class="badge bg-secondary rounded-pill">
+                                  <i class="fa-solid fa-minus"></i>
+                              </span>
+                          </ng-container>
+                      </ng-template>
+                  </div>
+              </div>
+          </td>
+          <td class="d-none d-xl-table-cell"
+              [ngbPopover]="uploadPopover" 
+              [popoverContext]="{row: row}"
+              popoverTitle="Upload Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ row.upload ? formatBytes(+row.upload * 1024 * 1024) : '0 B' }}</span>
+                  <div>
+                      <!-- XML value badge -->
+                      <span *ngIf="row['UploadXML'] !== undefined && row['UploadXML'] !== null" 
+                            class="badge bg-info rounded-pill">
+                          XML: {{ formatBytes(+row['UploadXML'] * 1024 * 1024) }}
+                      </span>
+                      <!-- Make badges mutually exclusive with an ngIf/else pattern -->
+                      <ng-container *ngIf="!row['RankUploadYesterday'] && row['RankUploadToday']; else rankUploadChanges">
+                          <!-- NEW badge for new users - green star -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-star"></i>
+                          </span>
+                      </ng-container>
+                      <!-- Template for rank change badges -->
+                      <ng-template #rankUploadChanges>
+                          <ng-container *ngIf="row['RankUploadYesterday'] !== undefined && row['RankUploadToday'] !== undefined && 
+                                              row['RankUploadYesterday'] !== null && row['RankUploadToday'] !== null">
+                              <!-- Improved rank -->
+                              <span *ngIf="(row['RankUploadYesterday'] - row['RankUploadToday']) > 0" 
+                                    class="badge bg-success rounded-pill">
+                                  <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                  {{ Math.abs(row['RankUploadYesterday'] - row['RankUploadToday']) }}
+                              </span>
+                              <!-- Worse rank -->
+                              <span *ngIf="(row['RankUploadYesterday'] - row['RankUploadToday']) < 0" 
+                                    class="badge bg-danger rounded-pill">
+                                  <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                  {{ Math.abs(row['RankUploadYesterday'] - row['RankUploadToday']) }}
+                              </span>
+                              <!-- Same rank -->
+                              <span *ngIf="row['RankUploadYesterday'] === row['RankUploadToday']" 
+                                    class="badge bg-secondary rounded-pill">
+                                  <i class="fa-solid fa-minus"></i>
+                              </span>
+                          </ng-container>
+                      </ng-template>
+                  </div>
+              </div>
+          </td>
+          <td class="d-none d-lg-table-cell"
+              [ngbPopover]="uptimePopover" 
+              [popoverContext]="{row: row}"
+              popoverTitle="Uptime Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                  <span>{{ formatTime(row.uptime) }}</span>
+                  <div>
+                      <!-- XML value badge -->
+                      <span *ngIf="row['UptimeXML'] !== undefined && row['UptimeXML'] !== null" 
+                            class="badge bg-info rounded-pill">
+                          XML: {{ formatTime(row['UptimeXML']) }}
+                      </span>
+                      <!-- Make badges mutually exclusive with an ngIf/else pattern -->
+                      <ng-container *ngIf="!row['RankUptimeYesterday'] && row['RankUptimeToday']; else rankUptimeChanges">
+                          <!-- NEW badge for new users - green star -->
+                          <span class="badge bg-success text-white rounded-pill">
+                              <i class="fa-solid fa-star"></i>
+                          </span>
+                      </ng-container>
+                      <!-- Template for rank change badges -->
+                      <ng-template #rankUptimeChanges>
+                          <ng-container *ngIf="row['RankUptimeYesterday'] !== undefined && row['RankUptimeToday'] !== undefined && 
+                                              row['RankUptimeYesterday'] !== null && row['RankUptimeToday'] !== null">
+                              <!-- Improved rank -->
+                              <span *ngIf="(row['RankUptimeYesterday'] - row['RankUptimeToday']) > 0" 
+                                    class="badge bg-success rounded-pill">
+                                  <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                                  {{ Math.abs(row['RankUptimeYesterday'] - row['RankUptimeToday']) }}
+                              </span>
+                              <!-- Worse rank -->
+                              <span *ngIf="(row['RankUptimeYesterday'] - row['RankUptimeToday']) < 0" 
+                                    class="badge bg-danger rounded-pill">
+                                  <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                                  {{ Math.abs(row['RankUptimeYesterday'] - row['RankUptimeToday']) }}
+                              </span>
+                              <!-- Same rank -->
+                              <span *ngIf="row['RankUptimeYesterday'] === row['RankUptimeToday']" 
+                                    class="badge bg-secondary rounded-pill">
+                                  <i class="fa-solid fa-minus"></i>
+                              </span>
+                          </ng-container>
+                      </ng-template>
+                  </div>
+              </div>
+          </td>
+          <td class="pulses-column d-none d-xl-table-cell" [ngbPopover]="pulsesPopover"
+              [popoverContext]="{row: row}"
+              popoverTitle="Pulses Info" 
+              triggers="mouseenter:mouseleave" 
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help">
+              <!-- Use only StatsPulses as per normalizeDataProperties -->
+              {{ formatNumber(row.pulses || 0) }}
+          </td>
+        </tr>
+      </tbody>
+      <tfoot [ngClass]="{'table-primary': currentTheme === 'dark', 'table-light': currentTheme === 'light'}" 
+             *ngIf="filteredData.length > 0">
+        <tr class="fw-bold">
+          <td>{{ 'stats.total' | translate }}</td>
+          <td>{{ filteredData.length }} {{ 'stats.users' | translate }}</td>
+          <td>{{ formatNumber(totalKeys) }}</td>
+          <td>{{ formatNumber(totalClicks) }}</td>
+          <td class="d-none d-md-table-cell">{{ formatNumber(totalScrolls) }}</td>
+          <td class="d-none d-lg-table-cell">{{ formatDistance(totalDistance) }}</td>
+          <td class="d-none d-md-table-cell">{{ formatBytes(totalDownload) }}</td>
+          <td class="d-none d-xl-table-cell">{{ formatBytes(totalUpload) }}</td>
+          <td class="d-none d-lg-table-cell">{{ formatTime(totalUptime) }}</td>
+          <td class="d-none d-xl-table-cell">{{ formatNumber(totalPulses) }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  
+  <!-- Pagination onder de tabel -->
+  <app-pagination
+    *ngIf="filteredData.length > 0"
+    [pageIndex]="page - 1"
+    [pageSize]="pageSize"
+    [totalItems]="filteredTotalItems"
+    (pageChange)="onPaginationChange($event)"
+  ></app-pagination>
+</div>
+
+<ng-template #userPopover let-row="row">
+  <div>
+    <p><strong>{{ 'stats.username' | translate }}:</strong> {{ row.UsernameFull || row.username || row.Username || 'N/A' }}</p>
+    <p *ngIf="row.lastPulse || row.LastPulse"><strong>{{ 'popovers.lastActivity' | translate }}:</strong> {{ (row.lastPulse || row.LastPulse) | date:'medium' }}</p>
+    <p *ngIf="row.team || row.Team"><strong>{{ 'stats.team' | translate }}:</strong> {{ row.team || row.Team }}</p>
+  </div>
+</ng-template>
+
+<ng-template #keysPopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatNumber(row['KeysToday'] || row.keys || 0) }}</p>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankKeysToday'] || '-' }}</p>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankKeysYesterday'] || '-' }}</p>
+    <ng-container *ngIf="row['RankKeysToday'] && row['RankKeysYesterday'] && 
+                         row['RankKeysToday'] !== '-' && row['RankKeysYesterday'] !== '-' && 
+                         +row['RankKeysToday'] > 0 && +row['RankKeysYesterday'] > 0">
+      <p [class.text-success]="(+row['RankKeysYesterday']) > (+row['RankKeysToday'])"
+         [class.text-danger]="(+row['RankKeysYesterday']) < (+row['RankKeysToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong> 
+        <ng-container *ngIf="(+row['RankKeysYesterday']) !== (+row['RankKeysToday'])">
+          {{ (+row['RankKeysYesterday']) > (+row['RankKeysToday']) ? '+' : '' }}{{ Math.abs((+row['RankKeysYesterday']) - (+row['RankKeysToday'])) }}
+          {{ (+row['RankKeysYesterday']) > (+row['RankKeysToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankKeysYesterday']) === (+row['RankKeysToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #clicksPopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatNumber(row['ClicksToday'] || row.clicks || 0) }}</p>
+    <ng-container *ngIf="row['ClicksToday'] !== undefined && row['ClicksYesterday'] !== undefined && row['ClicksYesterday'] > 0">
+      <p [class.text-success]="(row['ClicksToday'] || 0) > (row['ClicksYesterday'] || 0)"
+         [class.text-danger]="(row['ClicksToday'] || 0) < (row['ClicksYesterday'] || 0)">
+        <strong>{{ 'popovers.valueChange' | translate }}:</strong> 
+        {{ (row['ClicksToday'] || 0) > (row['ClicksYesterday'] || 0) ? '+' : '' }}{{ formatNumber((row['ClicksToday'] || 0) - (row['ClicksYesterday'] || 0)) }}
+      </p>
+    </ng-container>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankClicksToday'] || '-' }}</p>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankClicksYesterday'] || '-' }}</p>
+    <ng-container *ngIf="row['RankClicksToday'] && row['RankClicksYesterday'] && 
+                         row['RankClicksToday'] !== '-' && row['RankClicksYesterday'] !== '-' && 
+                         +row['RankClicksToday'] > 0 && +row['RankClicksYesterday'] > 0">
+      <p [class.text-success]="(+row['RankClicksYesterday']) > (+row['RankClicksToday'])"
+         [class.text-danger]="(+row['RankClicksYesterday']) < (+row['RankClicksToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong> 
+        <ng-container *ngIf="(+row['RankClicksYesterday']) !== (+row['RankClicksToday'])">
+          {{ (+row['RankClicksYesterday']) > (+row['RankClicksToday']) ? '+' : '' }}{{ Math.abs((+row['RankClicksYesterday']) - (+row['RankClicksToday'])) }}
+          {{ (+row['RankClicksYesterday']) > (+row['RankClicksToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankClicksYesterday']) === (+row['RankClicksToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #scrollsPopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatNumber(row['ScrollsToday'] || row.scrolls || 0) }}</p>
+    <ng-container *ngIf="row['ScrollsToday'] !== undefined && row['ScrollsYesterday'] !== undefined && row['ScrollsYesterday'] > 0">
+      <p [class.text-success]="(row['ScrollsToday'] || 0) > (row['ScrollsYesterday'] || 0)"
+         [class.text-danger]="(row['ScrollsToday'] || 0) < (row['ScrollsYesterday'] || 0)">
+        <strong>{{ 'popovers.valueChange' | translate }}:</strong> 
+        {{ (row['ScrollsToday'] || 0) > (row['ScrollsYesterday'] || 0) ? '+' : '' }}{{ formatNumber((row['ScrollsToday'] || 0) - (row['ScrollsYesterday'] || 0)) }}
+      </p>
+    </ng-container>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankScrollsToday'] || '-' }}</p>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankScrollsYesterday'] || '-' }}</p>
+    <ng-container *ngIf="row['RankScrollsToday'] && row['RankScrollsYesterday'] && 
+                         row['RankScrollsToday'] !== '-' && row['RankScrollsYesterday'] !== '-' && 
+                         +row['RankScrollsToday'] > 0 && +row['RankScrollsYesterday'] > 0">
+      <p [class.text-success]="(+row['RankScrollsYesterday']) > (+row['RankScrollsToday'])"
+         [class.text-danger]="(+row['RankScrollsYesterday']) < (+row['RankScrollsToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong> 
+        <ng-container *ngIf="(+row['RankScrollsYesterday']) !== (+row['RankScrollsToday'])">
+          {{ (+row['RankScrollsYesterday']) > (+row['RankScrollsToday']) ? '+' : '' }}{{ Math.abs((+row['RankScrollsYesterday']) - (+row['RankScrollsToday'])) }}
+          {{ (+row['RankScrollsYesterday']) > (+row['RankScrollsToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankScrollsYesterday']) === (+row['RankScrollsToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #distancePopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatDistance(row['DistanceToday'] || row.distance || 0) }}</p>
+    <ng-container *ngIf="row['DistanceToday'] !== undefined && row['DistanceYesterday'] !== undefined && row['DistanceYesterday'] > 0">
+      <p [class.text-success]="(row['DistanceToday'] || 0) > (row['DistanceYesterday'] || 0)"
+         [class.text-danger]="(row['DistanceToday'] || 0) < (row['DistanceYesterday'] || 0)">
+        <strong>{{ 'popovers.valueChange' | translate }}:</strong> 
+        {{ (row['DistanceToday'] || 0) > (row['DistanceYesterday'] || 0) ? '+' : '' }}{{ formatDistance((row['DistanceToday'] || 0) - (row['DistanceYesterday'] || 0)) }}
+      </p>
+    </ng-container>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankDistanceToday'] || '-' }}</p>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankDistanceYesterday'] || '-' }}</p>
+    <ng-container *ngIf="row['RankDistanceToday'] && row['RankDistanceYesterday'] && 
+                         row['RankDistanceToday'] !== '-' && row['RankDistanceYesterday'] !== '-' && 
+                         +row['RankDistanceToday'] > 0 && +row['RankDistanceYesterday'] > 0">
+      <p [class.text-success]="(+row['RankDistanceYesterday']) > (+row['RankDistanceToday'])"
+         [class.text-danger]="(+row['RankDistanceYesterday']) < (+row['RankDistanceToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong> 
+        <ng-container *ngIf="(+row['RankDistanceYesterday']) !== (+row['RankDistanceToday'])">
+          {{ (+row['RankDistanceYesterday']) > (+row['RankDistanceToday']) ? '+' : '' }}{{ Math.abs((+row['RankDistanceYesterday']) - (+row['RankDistanceToday'])) }}
+          {{ (+row['RankDistanceYesterday']) > (+row['RankDistanceToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankDistanceYesterday']) === (+row['RankDistanceToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #downloadPopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatBytes((row['DownloadToday'] || row.download || 0) * 1024 * 1024) }}</p>
+    <ng-container *ngIf="viewType !== 'xml' && row['DownloadToday'] !== undefined && row['DownloadYesterday'] !== undefined && row['DownloadYesterday'] > 0">
+      <p [class.text-success]="(row['DownloadToday'] || 0) > (row['DownloadYesterday'] || 0)"
+         [class.text-danger]="(row['DownloadToday'] || 0) < (row['DownloadYesterday'] || 0)">
+        <strong>{{ 'popovers.valueChange' | translate }}:</strong> 
+        {{ (row['DownloadToday'] || 0) > (row['DownloadYesterday'] || 0) ? '+' : '' }}{{ formatBytes(((row['DownloadToday'] || 0) - (row['DownloadYesterday'] || 0)) * 1024 * 1024) }}
+      </p>
+    </ng-container>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankDownloadToday'] || '-' }}</p>
+    <p class="mb-0" *ngIf="viewType !== 'xml'"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankDownloadYesterday'] || '-' }}</p>
+    <ng-container *ngIf="viewType !== 'xml' && row['RankDownloadToday'] && row['RankDownloadYesterday'] && 
+                         row['RankDownloadToday'] !== '-' && row['RankDownloadYesterday'] !== '-' && 
+                         +row['RankDownloadToday'] > 0 && +row['RankDownloadYesterday'] > 0">
+      <p [class.text-success]="(+row['RankDownloadYesterday']) > (+row['RankDownloadToday'])"
+         [class.text-danger]="(+row['RankDownloadYesterday']) < (+row['RankDownloadToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong> 
+        <ng-container *ngIf="(+row['RankDownloadYesterday']) !== (+row['RankDownloadToday'])">
+          {{ (+row['RankDownloadYesterday']) > (+row['RankDownloadToday']) ? '+' : '' }}{{ Math.abs((+row['RankDownloadYesterday']) - (+row['RankDownloadToday'])) }}
+          {{ (+row['RankDownloadYesterday']) > (+row['RankDownloadToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankDownloadYesterday']) === (+row['RankDownloadToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #uploadPopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatBytes((row['UploadToday'] || row.upload || 0) * 1024 * 1024) }}</p>
+    <ng-container *ngIf="viewType !== 'xml' && row['UploadToday'] !== undefined && row['UploadYesterday'] !== undefined && row['UploadYesterday'] > 0">
+      <p [class.text-success]="(row['UploadToday'] || 0) > (row['UploadYesterday'] || 0)"
+         [class.text-danger]="(row['UploadToday'] || 0) < (row['UploadYesterday'] || 0)">
+        <strong>{{ 'popovers.valueChange' | translate }}:</strong> 
+        {{ (row['UploadToday'] || 0) > (row['UploadYesterday'] || 0) ? '+' : '' }}{{ formatBytes(((row['UploadToday'] || 0) - (row['UploadYesterday'] || 0)) * 1024 * 1024) }}
+      </p>
+    </ng-container>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankUploadToday'] || '-' }}</p>
+    <p class="mb-0" *ngIf="viewType !== 'xml'"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankUploadYesterday'] || '-' }}</p>
+    <ng-container *ngIf="viewType !== 'xml' && row['RankUploadToday'] && row['RankUploadYesterday'] && 
+                         row['RankUploadToday'] !== '-' && row['RankUploadYesterday'] !== '-' && 
+                         +row['RankUploadToday'] > 0 && +row['RankUploadYesterday'] > 0">
+      <p [class.text-success]="(+row['RankUploadYesterday']) > (+row['RankUploadToday'])"
+         [class.text-danger]="(+row['RankUploadYesterday']) < (+row['RankUploadToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong> 
+        <ng-container *ngIf="(+row['RankUploadYesterday']) !== (+row['RankUploadToday'])">
+          {{ (+row['RankUploadYesterday']) > (+row['RankUploadToday']) ? '+' : '' }}{{ Math.abs((+row['RankUploadYesterday']) - (+row['RankUploadToday'])) }}
+          {{ (+row['RankUploadYesterday']) > (+row['RankUploadToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankUploadYesterday']) === (+row['RankUploadToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #uptimePopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatTime(row['UptimeToday'] || row.uptime || 0) }}</p>
+    <ng-container *ngIf="viewType !== 'xml' && row['UptimeToday'] !== undefined && row['UptimeYesterday'] !== undefined && row['UptimeYesterday'] > 0">
+      <p [class.text-success]="(row['UptimeToday'] || 0) > (row['UptimeYesterday'] || 0)"
+         [class.text-danger]="(row['UptimeToday'] || 0) < (row['UptimeYesterday'] || 0)">
+        <strong>{{ 'popovers.valueChange' | translate }}:</strong> 
+        {{ (row['UptimeToday'] || 0) > (row['UptimeYesterday'] || 0) ? '+' : '' }}{{ formatTime((row['UptimeToday'] || 0) - (row['UptimeYesterday'] || 0)) }}
+      </p>
+    </ng-container>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankUptimeToday'] || '-' }}</p>
+    <p class="mb-0" *ngIf="viewType !== 'xml'"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankUptimeYesterday'] || '-' }}</p>
+    <ng-container *ngIf="viewType !== 'xml' && row['RankUptimeToday'] && row['RankUptimeYesterday'] && 
+                         row['RankUptimeToday'] !== '-' && row['RankUptimeYesterday'] !== '-' && 
+                         +row['RankUptimeToday'] > 0 && +row['RankUptimeYesterday'] > 0">
+      <p [class.text-success]="(+row['RankUptimeYesterday']) > (+row['RankUptimeToday'])"
+         [class.text-danger]="(+row['RankUptimeYesterday']) < (+row['RankUptimeToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong> 
+        <ng-container *ngIf="(+row['RankUptimeYesterday']) !== (+row['RankUptimeToday'])">
+          {{ (+row['RankUptimeYesterday']) > (+row['RankUptimeToday']) ? '+' : '' }}{{ Math.abs((+row['RankUptimeYesterday']) - (+row['RankUptimeToday'])) }}
+          {{ (+row['RankUptimeYesterday']) > (+row['RankUptimeToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankUptimeYesterday']) === (+row['RankUptimeToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
+  </div>
+</ng-template>
+
+<ng-template #pulsesPopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatNumber(row['PulsesToday'] || row.pulses || 0) }}</p>
+    <p class="mb-0" *ngIf="viewType !== 'xml'"><strong>{{ getTimePeriodLabels().previous }}:</strong> {{ formatNumber(row['PulsesYesterday'] || 0) }}</p>
+    <ng-container *ngIf="viewType !== 'xml' && row['PulsesToday'] !== undefined && row['PulsesYesterday'] !== undefined && row['PulsesYesterday'] > 0">
+      <p [class.text-success]="(row['PulsesToday'] || 0) > (row['PulsesYesterday'] || 0)"
+         [class.text-danger]="(row['PulsesToday'] || 0) < (row['PulsesYesterday'] || 0)">
+        <strong>{{ 'popovers.valueChange' | translate }}:</strong> 
+        {{ (row['PulsesToday'] || 0) > (row['PulsesYesterday'] || 0) ? '+' : '' }}{{ formatNumber((row['PulsesToday'] || 0) - (row['PulsesYesterday'] || 0)) }}
+      </p>
+    </ng-container>
+    <p *ngIf="row.lastPulse || row.LastPulse"><strong>{{ 'popovers.lastPulse' | translate }}:</strong> {{ (row.lastPulse || row.LastPulse) | date:'medium' }}</p>
+  </div>
+</ng-template>
+
+<ng-template #rankPopover let-row="row" let-rank="rank">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ row.today || '-' }}</p>
+    <p class="mb-0" *ngIf="viewType !== 'xml'"><strong>{{ getTimePeriodLabels().previous }}:</strong> {{ row.yesterday || '-' }}</p>
+  </div>
+</ng-template>

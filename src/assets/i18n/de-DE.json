@@ -1,0 +1,180 @@
+{
+  "nav": {
+    "daily": "Täglich",
+    "weekly": "Wöchentliche",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "overall": "Gesamt",
+    "xml": "XML",
+    "team": "Unterteam",
+    "all": "Alle"
+  },
+  
+  "chart": {
+    "metric": "Metrik",
+    "type": "Diagrammtyp",
+    "height": "Höhe",
+    "keys": "Tasten",
+    "clicks": "Klicks",
+    "scrolls": "Scrolls",
+    "distance": "Entfernung",
+    "download": "Download",
+    "upload": "Upload",
+    "uptime": "Laufzeit",
+    "pulses": "Impulse",
+    "column": "Säule",
+    "bar": "Balken",
+    "line": "Linie",
+    "byUser": "pro Benutzer",
+    "sortedByRank": "sortiert nach Rang",
+    "sortedBy": "sortiert nach",
+    "sortedAlphabetically": "alphabetisch sortiert",
+    "loadError": "Fehler beim Laden der Diagrammdaten. Bitte versuchen Sie es erneut.",
+    "refresh": "Aktualisieren",
+    "keysAxis": "Tastenanschläge",
+    "clicksAxis": "Mausklicks",
+    "scrollsAxis": "Scrolls",
+    "distanceKmAxis": "Entfernung (km)",
+    "distanceMiAxis": "Entfernung (Meilen)",
+    "downloadAxis": "Download (MB)",
+    "uploadAxis": "Upload (MB)",
+    "uptimeAxis": "Laufzeit (Stunden)",
+    "pulsesAxis": "Impulse",
+    "generic": "Wert"
+  },
+  
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Fehler",
+    "noData": "Keine Daten verfügbar",
+    "search": "Suchen",
+    "showing": "Anzeigen",
+    "dataFor": "Daten für",
+    "team": "Team",
+    "searchFilter": "Suchfilter",
+    "none": "Keine",
+    "week": "Woche",
+    "to": "bis",
+    "size": "Größe",
+    "loadingData": "Daten werden geladen",
+    "errorLoadingData": "Fehler beim Laden der Daten",
+    "apply": "Anwenden",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "pageLoadedIn": "Seite geladen in",
+    "approx50ms": "≈50ms",
+    "localStorageInfo": "Lokaler Browserspeicher",
+    "key": "Schlüssel",
+    "type": "Typ",
+    "notAvailable": "Nicht Verfügbar",
+    "period": "Zeitraum",
+    "clearLocalStorage": "Lokalen Speicher löschen"
+  },
+
+  "period": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "thisWeek": "Diese Woche",
+    "lastWeek": "Letzte Woche",
+    "thisMonth": "Dieser Monat",
+    "lastMonth": "Letzter Monat",
+    "thisYear": "Dieses Jahr",
+    "lastYear": "Letztes Jahr",
+    "current": "Aktuell",
+    "previous": "Vorherig",
+    "all": "Gesamte Zeit"
+  },
+  
+  "stats": {
+    "username": "Benutzername",
+    "keys": "Tasten",
+    "clicks": "Klicks",
+    "scrolls": "Scrolls",
+    "distance": "Entfernung",
+    "download": "Download",
+    "upload": "Upload",
+    "uptime": "Laufzeit",
+    "pulses": "Impulse",
+    "rank": "Rang",
+    "total": "Gesamt",
+    "users": "Benutzer",
+    "team": "Team",
+    "usernameDescription": "Benutzerkonto-Name"
+  },
+
+  "popovers": {
+    "userDetails": "Benutzerdetails",
+    "lastActivity": "Letzte Aktivität",
+    "downloadVolume": "Downloadvolumen",
+    "uploadVolume": "Uploadvolumen",
+    "uptime": "Aktive Zeit",
+    "pulses": "Impulsinformationen",
+    "lastPulse": "Letzter Impuls",
+    "valueChange": "Wertänderung",
+    "rank": "Rang",
+    "rankChange": "Rangänderung",
+    "better": "(besser)",
+    "worse": "(schlechter)",
+    "same": "gleich",
+    "change": "Änderung"
+  },
+
+  "pagination": {
+    "showing": "Zeige",
+    "of": "von",
+    "items": "Einträgen",
+    "itemsPerPage": "Einträge pro Seite"
+  },
+
+  "units": {
+    "toggle": "Zwischen metrisch und imperial umschalten",
+    "metric": "Metrisch",
+    "imperial": "Imperial",
+    "hours": "Stunden"
+  },
+
+  "datepicker": {
+    "weekdays": "Mo,Di,Mi,Do,Fr,Sa,So",
+    "months": "Jan,Feb,Mär,Apr,Mai,Jun,Jul,Aug,Sep,Okt,Nov,Dez",
+    "weekLabel": "Woche",
+    "format": "tt.mm.jjjj"
+  },
+
+  "dateFormat": {
+    "dd-mm-jjjj": "tt.mm.jjjj",
+    "tt.mm.jjjj": "tt.mm.jjjj",
+    "jj/mm/aaaa": "tt.mm.jjjj",
+    "dd/mm/aaaa": "tt.mm.jjjj",
+    "mm/dd/yyyy": "tt.mm.jjjj"
+  },
+  
+  "xml": {
+    "changes": "Änderungen",
+    "dailyChanges": "Tägliche Änderungen",
+    "weeklyChanges": "Wöchentliche Änderungen", 
+    "monthlyChanges": "Monatliche Änderungen",
+    "yearlyChanges": "Jährliche Änderungen",
+    "overallChanges": "Gesamtänderungen",
+    "addedUsers": "Hinzugefügte Benutzer",
+    "leftUsers": "Entfernte Benutzer",
+    "leftUsersTitle": "Datum verlassen",
+    "changedUsers": "Geänderte Benutzer",
+    "oldUsername": "Alter Benutzername",
+    "newUsername": "Neuer Benutzername",
+    "date": "Datum",
+    "loadFailed": "Änderungsdaten konnten nicht geladen werden",
+    "noChanges": "Keine Änderungen für diesen Zeitraum erkannt",
+    "showDetails": "Details Anzeigen",
+    "hideDetails": "Details Ausblenden",
+    "daily": "Täglich",
+    "weekly": "Wöchentlich",
+    "monthly": "Monatlich",
+    "yearly": "Jährlich",
+    "noDataFound": "Keine XML-Daten für das ausgewählte Datum gefunden",
+    "filters": {
+      "top": "Top",
+      "other": "Andere",
+      "team": "Team"
+    }
+  }
+}

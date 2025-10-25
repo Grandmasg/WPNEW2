@@ -1,0 +1,396 @@
+.chart-container {
+  width: 100%;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border: 1px solid var(--bs-border-color);
+  overflow: hidden;
+  border-radius: 0.25rem;
+  transition: height 0.3s ease;
+  min-height: 400px; // Increased to prevent layout shift
+  
+  // Ensure all child elements inherit proper contrast
+  * {
+    color: inherit;
+  }
+}
+
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+// Make the chart controls more compact
+.chart-controls {
+  // Remove all background, border, padding - just a container now
+  border: none;
+  background: none;
+  padding: 0;
+  margin-bottom: 0;
+  
+  .btn-group {
+    margin-bottom: 0.25rem; // Reduced margin
+    
+    .btn {
+      // Smaller buttons
+      height: 32px; // Reduced height
+      line-height: 1.2;
+      padding: 0.25rem 0.5rem; // Smaller padding
+      background-color: var(--bs-secondary-bg);
+      color: var(--bs-body-color);
+      transition: all 0.2s ease;
+      font-size: 0.75rem; // Smaller font size
+      border-color: var(--bs-border-color);
+      
+      &:hover {
+        background-color: var(--bs-component-hover-bg);
+      }
+      
+      &.active, &.btn-primary {
+        background-color: var(--bs-component-active-bg);
+        color: var(--bs-component-active-color);
+        border-color: var(--bs-primary);
+      }
+    }
+  }
+}
+
+// Make control groups more compact
+.chart-control-group {
+  display: flex;
+  align-items: center;
+  margin-right: 0.75rem; // Reduced margin
+  min-height: 38px; // Prevent layout shift
+  
+  label {
+    font-size: 0.75rem; // Smaller font size
+    font-weight: 500;
+    margin-bottom: 0;
+    margin-right: 0.3rem; // Smaller margin
+    white-space: nowrap;
+    line-height: 1;
+    color: var(--bs-body-color);
+  }
+}
+
+// Improve chart-controls-container layout
+.chart-controls-container {
+  gap: 0.5rem; // Add gap for better spacing
+  flex-wrap: wrap;
+  justify-content: space-between;
+  // Reserve space to prevent shift
+  min-height: 50px;
+}
+
+// Remove theme-specific styling and use Bootstrap CSS variables
+:host {
+  display: block;
+  margin-bottom: 1rem;
+  width: 100%;
+  
+  .graph-container {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.25rem;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    
+    // Ensure all text elements have proper contrast
+    * {
+      color: inherit;
+    }
+  }
+}
+
+// Dark mode - donkerder grijs
+[data-bs-theme="dark"] {
+  .highcharts-graph-container .graph-container {
+    border-color: #495057 !important;
+  }
+}
+
+// Use consistent naming for chart-specific overrides
+:host ::ng-deep {
+  .highcharts-container {
+    overflow: visible !important;
+    width: 100% !important;
+    min-width: 300px;
+  }
+  
+  .highcharts-background {
+    transition: fill 0.3s ease;
+  }
+
+  .highcharts-root {
+    width: 100% !important;
+  }
+}
+
+// Add consistent media queries matching date-input-group
+@media (max-width: 576px) {
+  .chart-controls-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .chart-control-group {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.75rem;
+    justify-content: space-between;
+    
+    .btn-group {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+// Update responsive behavior for better small screen handling
+@media (max-width: 768px) {
+  .chart-controls-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .chart-control-group {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 991px) {
+  .chart-control-group {
+    margin-right: 0.5rem;
+    
+    label {
+      font-size: 0.7rem;
+    }
+    
+    .btn-group .btn {
+      padding: 0.2rem 0.4rem;
+      font-size: 0.7rem;
+    }
+  }
+}
+
+.graph-container {
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  min-height: 320px;
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.375rem;
+  transition: height 0.3s ease;
+  overflow: hidden;
+}
+
+// Chart wrapper to prevent layout shift (CLS)
+.chart-wrapper {
+  width: 100%;
+  position: relative;
+  min-height: 400px; // Reserve space for chart
+  contain: layout; // Improve layout stability
+  
+  // Prevent content from shifting during load
+  highcharts-chart {
+    width: 100%;
+    display: block;
+  }
+}
+
+// Dark theme - donkerder grijs
+[data-bs-theme="dark"] .graph-container {
+  border-color: #495057 !important;
+  color: var(--bs-body-color);
+}
+
+// Improve the loading overlay
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Chart component specific styles */
+:host {
+  display: block;
+  width: 100%;
+}
+
+:host-context([data-bs-theme="dark"]) {
+  .btn-outline-light {
+    color: #f8f9fa;
+    border-color: #495057 !important;
+    
+    &:hover, &:focus, &:active {
+      background-color: rgba(248, 249, 250, 0.1);
+    }
+  }
+  
+  .dropdown-menu {
+    background-color: #343a40;
+    border-color: #495057 !important;
+    
+    .dropdown-item {
+      color: #f8f9fa;
+      
+      &:hover, &:focus {
+        background-color: #495057;
+      }
+      
+      &.active {
+        background-color: #2c3e50;
+      }
+    }
+    
+    .dropdown-divider {
+      border-top: 1px solid #495057 !important;
+    }
+  }
+
+  /* Fix for Highcharts in dark mode using Flatly colors */
+  .highcharts-background {
+    fill: #212529 !important;
+  }
+  
+  .highcharts-title, .highcharts-subtitle, 
+  .highcharts-axis-labels text,
+  .highcharts-axis-title text,
+  .highcharts-legend-item text {
+    fill: #ecf0f1 !important;
+  }
+  
+  .highcharts-grid-line {
+    stroke: #495057 !important;
+  }
+  
+  .highcharts-tooltip {
+    filter: brightness(0.8) !important;
+  }
+
+  /* Make sure axis lines are visible */
+  .highcharts-axis-line, .highcharts-tick {
+    stroke: #495057 !important;
+  }
+
+  /* Improve tooltip readability */
+  .highcharts-tooltip-box {
+    fill: #343a40 !important;
+    stroke: #495057 !important;
+  }
+
+  /* Improve button contrast in dark mode */
+  .btn-sm {
+    border-color: #495057 !important;
+    
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+:host-context([data-bs-theme="light"]) {
+  .dropdown-item.active {
+    background-color: #2c3e50; /* Flatly primary */
+    color: white;
+  }
+
+  /* Ensure light mode Highcharts has proper styling */
+  .highcharts-background {
+    fill: #ffffff !important;
+  }
+  
+  .highcharts-title, .highcharts-subtitle, 
+  .highcharts-axis-labels text,
+  .highcharts-axis-title text,
+  .highcharts-legend-item text {
+    fill: #333333 !important;
+  }
+  
+  .highcharts-grid-line {
+    stroke: #e6e6e6 !important;
+  }
+  
+  /* Make sure axis lines are visible */
+  .highcharts-axis-line, .highcharts-tick {
+    stroke: #cccccc !important;
+  }
+
+  /* Improve tooltip readability */
+  .highcharts-tooltip-box {
+    fill: #ffffff !important;
+    stroke: #dddddd !important;
+  }
+}
+
+/* Improve hover interactions for dropdown items */
+.dropdown-item {
+  cursor: pointer;
+}
+
+/* Fix for chart animation freezes */
+.highcharts-point {
+  transition: none !important;
+}
+
+[data-bs-theme="dark"] .chart-container {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border: 1px solid var(--bs-border-color);
+}
+[data-bs-theme="dark"] .chart-controls {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border: 1px solid var(--bs-border-color);
+  .btn-group .btn {
+    background-color: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+    &:hover {
+      background-color: var(--bs-component-hover-bg);
+    }
+    &.active, &.btn-primary {
+      background-color: var(--bs-component-active-bg);
+      color: var(--bs-component-active-color);
+      border-color: var(--bs-primary);
+    }
+  }
+}
+
+/* Pagination styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.pagination-button {
+  padding: 10px 15px;
+  margin: 0 5px;
+  border: 1px solid #007bff;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover {
+  background-color: #0056b3;
+}
+
+.pagination-info {
+  margin: 0 10px;
+}

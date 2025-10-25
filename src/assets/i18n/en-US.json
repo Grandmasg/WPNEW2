@@ -1,0 +1,187 @@
+{
+  "nav": {
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "overall": "Overall",
+    "xml": "XML",
+    "team": "Subteam",
+    "all": "All"
+  },
+  
+  "chart": {
+    "metric": "Metric",
+    "type": "Chart Type",
+    "height": "Height",
+    "keys": "Keys",
+    "clicks": "Clicks",
+    "scrolls": "Scrolls",
+    "distance": "Distance",
+    "download": "Download",
+    "upload": "Upload",
+    "uptime": "Uptime",
+    "pulses": "Pulses",
+    "column": "Column",
+    "bar": "Bar",
+    "line": "Line",
+    "byUser": "by User",
+    "sortedByRank": "sorted by Rank",
+    "sortedBy": "sorted by",
+    "sortedAlphabetically": "sorted alphabetically",
+    "loadError": "Error loading chart data. Please try again.",
+    "refresh": "Refresh",
+    "keysAxis": "Keystrokes",
+    "clicksAxis": "Mouse Clicks",
+    "scrollsAxis": "Scrolls",
+    "distanceKmAxis": "Distance (km)",
+    "distanceMiAxis": "Distance (miles)",
+    "downloadAxis": "Download (MB)",
+    "uploadAxis": "Upload (MB)",
+    "uptimeAxis": "Uptime (hours)",
+    "pulsesAxis": "Pulses",
+    "generic": "Value",
+    "loadingData": "Loading chart data...",
+    "errorLoading": "Error Loading Chart Data",
+    "tryAgainLater": "Please try again later",
+    "noDataAvailable": "No Data Available",
+    "noRecordsFound": "No records found for the selected criteria",
+    "noData": "No Data"
+  },
+  
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "noData": "No data available",
+    "search": "Search",
+    "showing": "Showing",
+    "dataFor": "data for",
+    "team": "Team",
+    "searchFilter": "Search filter",
+    "none": "None",
+    "week": "Week",
+    "to": "to",
+    "loadingData": "Loading data...",
+    "size": "Size",
+    "errorLoadingData": "Error loading data",
+    "apply": "Apply",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "pageLoadedIn": "Page loaded in",
+    "approx50ms": "≈50ms",
+    "localStorageInfo": "Local browser storage",
+    "key": "Key",
+    "type": "Type",
+    "changes": "Changes",
+    "notAvailable": "Not Available",
+    "period": "Period",
+    "clearLocalStorage": "Clear local storage"
+  },
+
+  "period": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "lastWeek": "Last Week",
+    "thisMonth": "This Month",
+    "lastMonth": "Last Month",
+    "thisYear": "This Year",
+    "lastYear": "Last Year",
+    "current": "Current",
+    "previous": "Previous",
+    "all": "All Time"
+  },
+  
+  "stats": {
+    "username": "Username",
+    "keys": "Keys",
+    "clicks": "Clicks",
+    "scrolls": "Scrolls",
+    "distance": "Distance",
+    "download": "Download",
+    "upload": "Upload",
+    "uptime": "Uptime",
+    "pulses": "Pulses",
+    "rank": "Rank",
+    "total": "Total",
+    "users": "users",
+    "team": "Team",
+    "usernameDescription": "User account name"
+  },
+
+  "popovers": {
+    "userDetails": "User Details",
+    "lastActivity": "Last Activity",
+    "downloadVolume": "Download Volume",
+    "uploadVolume": "Upload Volume",
+    "uptime": "Active Time",
+    "pulses": "Pulse Information",
+    "lastPulse": "Last Pulse",
+    "valueChange": "Value Change",
+    "rank": "Rank",
+    "rankChange": "Rank Change",
+    "better": "(better)",
+    "worse": "(worse)",
+    "same": "same",
+    "change": "Change"
+  },
+
+  "pagination": {
+    "showing": "Showing",
+    "of": "of",
+    "items": "items",
+    "itemsPerPage": "Items per page"
+  },
+
+  "units": {
+    "toggle": "Toggle between metric and imperial units",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "hours": "hours"
+  },
+
+  "datepicker": {
+    "weekdays": "Mo,Tu,We,Th,Fr,Sa,Su",
+    "months": "Jan,Feb,Mar,Apr,May,Jun,Jul,Aug,Sep,Oct,Nov,Dec",
+    "weekLabel": "Week",
+    "format": "mm/dd/yyyy"
+  },
+
+  "dateFormat": {
+    "dd-mm-jjjj": "mm/dd/yyyy",
+    "tt.mm.jjjj": "mm/dd/yyyy",
+    "jj/mm/aaaa": "mm/dd/yyyy",
+    "dd/mm/aaaa": "mm/dd/yyyy",
+    "mm/dd/yyyy": "mm/dd/yyyy"
+  },
+  
+  "xml": {
+    "changes": "Changes",
+    "dailyChanges": "Daily Changes",
+    "weeklyChanges": "Weekly Changes", 
+    "monthlyChanges": "Monthly Changes",
+    "yearlyChanges": "Yearly Changes",
+    "overallChanges": "Overall Changes",
+    "addedUsers": "Added Users",
+    "leftUsers": "Left Users",
+    "leftUsersTitle": "Date left",
+    "changedUsers": "Changed Users",
+    "oldUsername": "Old Username",
+    "newUsername": "New Username",
+    "date": "Date",
+    "loadFailed": "Failed to load changes data",
+    "noChanges": "No changes detected for this period",
+    "showDetails": "Show Details",
+    "hideDetails": "Hide Details",
+    "noDataFound": "No XML data found for the selected date",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "filters": {
+      "top": "Top",
+      "other": "Other",
+      "team": "Team"
+    }
+  }
+}
