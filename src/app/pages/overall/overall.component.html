@@ -1,0 +1,83 @@
+<div class="container" #overallContainer>
+  <div style="padding-bottom: 1rem;"></div>
+  
+  <app-date-input-group 
+    [selectedDate]="selectedDate"
+    [offset]="offset"
+    viewType="overall"
+    (dateChange)="onDateChange($event)"
+    (offsetChange)="onOffsetChange($event)">
+  </app-date-input-group>
+  
+  <div class="content">
+    <div class="alert d-flex flex-wrap justify-content-between align-items-center"
+         [ngClass]="{'alert-primary': currentTheme === 'dark', 'alert-light': currentTheme === 'light'}">
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-regular fa-calendar"></i> Showing <strong>Overall Totals</strong> data for: 
+        <strong>
+          <ng-container *ngIf="startDate && endDate">
+            {{ startDate }} - {{ endDate }}
+          </ng-container>
+          <ng-container *ngIf="!(startDate && endDate)">
+            {{ selectedDate | date:'mediumDate' }}
+          </ng-container>
+        </strong>
+      </div>
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-solid fa-users"></i> Team: <strong>{{ teamname === '-' ? 'All Teams' : teamname }}</strong>
+      </div>
+      <div class="mb-1 mb-md-0">
+        <i class="fa-solid fa-search"></i> Search filter: <strong>{{ searchText || 'None' }}</strong>
+      </div>
+    </div>
+    
+    <!-- XML Changes Tables - Only show when there's data -->
+    <app-xml-changes 
+      *ngIf="xmlChanges && xmlChanges.length > 0"
+      [isLoading]="xmlLoading" 
+      [hasError]="false" 
+      [changes]="getFormattedChanges()" 
+      [date]="selectedDate" 
+      [team]="teamname" 
+      [currentTheme]="currentTheme" 
+      [offset]="offset" 
+      [showSummary]="true" 
+      [xmlData]="xmlChanges" 
+      [skipAutoLoad]="true" 
+      [parentLoaded]="!isLoading">
+    </app-xml-changes>
+
+    <!-- Add the stats table with revised attributes -->
+    <app-stats-table 
+      [data]="stats" 
+      [isLoading]="isLoading" 
+      [hasError]="hasError"
+      [viewType]="'overall'"
+      [searchTerm]="searchText"
+      [currentTheme]="currentTheme"
+      [xmlData]="xmlChanges"
+      (pageChange)="onTablePageChange($event)"
+      (sortChange)="onSortChange($event)"
+      (searchChange)="onSearchChange($event)"
+      #statsTable>
+    </app-stats-table>
+
+    <!-- Highcharts graph added, uniform with monthly -->
+    <app-highcharts-graph
+      #chart
+      [period]="'overall'"
+      [offset]="offset"
+      [team]="teamname"
+      [currentTheme]="currentTheme"
+      [tablePageIndex]="currentPageIndex"
+      [tablePageSize]="currentPageSize"
+      [totalItems]="stats.length || 0"
+      [searchTerm]="searchText"
+      [skipAutoLoad]="false"
+      [defaultMetric]="'keys'"
+      [xmlData]="xmlChanges"
+      [statsData]="stats"
+      [sortInfo]="{ active: currentSortColumn || 'keys', direction: currentSortDirection || 'desc' }">
+    </app-highcharts-graph>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+# robots.txt for WhatPulse Statistics Dashboard
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://www.grandmasg.nl/sitemap.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1

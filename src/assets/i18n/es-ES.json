@@ -1,0 +1,180 @@
+{
+  "nav": {
+    "daily": "Diario",
+    "weekly": "Semanal",
+    "monthly": "Mensual",
+    "yearly": "Anual",
+    "overall": "General",
+    "xml": "XML",
+    "team": "Subequipo",
+    "all": "Todos"
+  },
+  
+  "chart": {
+    "metric": "Métrica",
+    "type": "Tipo de gráfico",
+    "height": "Altura",
+    "keys": "Teclas",
+    "clicks": "Clics",
+    "scrolls": "Desplazamientos",
+    "distance": "Distancia",
+    "download": "Descarga",
+    "upload": "Subida",
+    "uptime": "Tiempo activo",
+    "pulses": "Pulsos",
+    "column": "Columna",
+    "bar": "Barra",
+    "line": "Línea",
+    "byUser": "por Usuario",
+    "sortedByRank": "ordenado por Rango",
+    "sortedBy": "ordenado por",
+    "sortedAlphabetically": "ordenado alfabéticamente",
+    "loadError": "Error al cargar los datos del gráfico. Por favor, inténtelo de nuevo.",
+    "refresh": "Actualizar",
+    "keysAxis": "Pulsaciones",
+    "clicksAxis": "Clics del ratón",
+    "scrollsAxis": "Desplazamientos",
+    "distanceKmAxis": "Distancia (km)",
+    "distanceMiAxis": "Distancia (millas)",
+    "downloadAxis": "Descarga (MB)",
+    "uploadAxis": "Subida (MB)",
+    "uptimeAxis": "Tiempo activo (horas)",
+    "pulsesAxis": "Pulsos",
+    "generic": "Valor"
+  },
+  
+  "common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "noData": "No hay datos disponibles",
+    "search": "Buscar",
+    "showing": "Mostrando",
+    "dataFor": "datos para",
+    "team": "Equipo",
+    "searchFilter": "Filtro de búsqueda",
+    "none": "Ninguno",
+    "week": "Semana",
+    "to": "a",
+    "size": "Tamaño",
+    "loadingData": "Cargando datos...",
+    "errorLoadingData": "Error al cargar los datos",
+    "apply": "Aplicar",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "pageLoadedIn": "Página cargada en",
+    "approx50ms": "≈50ms",
+    "localStorageInfo": "Almacenamiento local del navegador",
+    "key": "Clave",
+    "type": "Tipo",
+    "notAvailable": "No Disponible",
+    "period": "Período",
+    "clearLocalStorage": "Borrar almacenamiento local"
+  },
+
+  "period": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "thisWeek": "Esta semana",
+    "lastWeek": "Semana pasada",
+    "thisMonth": "Este mes",
+    "lastMonth": "Mes pasado",
+    "thisYear": "Este año",
+    "lastYear": "Año pasado",
+    "current": "Actual",
+    "previous": "Anterior",
+    "all": "Todo el tiempo"
+  },
+  
+  "stats": {
+    "username": "Usuario",
+    "keys": "Teclas",
+    "clicks": "Clics",
+    "scrolls": "Desplazamientos",
+    "distance": "Distancia",
+    "download": "Descarga",
+    "upload": "Subida",
+    "uptime": "Tiempo activo",
+    "pulses": "Pulsos",
+    "rank": "Rango",
+    "total": "Total",
+    "users": "usuarios",
+    "team": "Equipo",
+    "usernameDescription": "Nombre de cuenta de usuario"
+  },
+
+  "popovers": {
+    "userDetails": "Detalles del usuario",
+    "lastActivity": "Última actividad",
+    "downloadVolume": "Volumen de descarga",
+    "uploadVolume": "Volumen de subida",
+    "uptime": "Tiempo activo",
+    "pulses": "Información de pulsos",
+    "lastPulse": "Último pulso",
+    "valueChange": "Cambio de valor",
+    "rank": "Rango",
+    "rankChange": "Cambio de rango",
+    "better": "(mejor)",
+    "worse": "(peor)",
+    "same": "igual",
+    "change": "Cambio"
+  },
+
+  "pagination": {
+    "showing": "Mostrando",
+    "of": "de",
+    "items": "elementos",
+    "itemsPerPage": "Elementos por página"
+  },
+
+  "units": {
+    "toggle": "Cambiar entre métrico e imperial",
+    "metric": "Métrico",
+    "imperial": "Imperial",
+    "hours": "horas"
+  },
+
+  "datepicker": {
+    "weekdays": "Lu,Ma,Mi,Ju,Vi,Sa,Do",
+    "months": "Ene,Feb,Mar,Abr,May,Jun,Jul,Ago,Sep,Oct,Nov,Dic",
+    "weekLabel": "Semana",
+    "format": "dd/mm/aaaa"
+  },
+
+  "dateFormat": {
+    "dd-mm-jjjj": "dd/mm/aaaa",
+    "tt.mm.jjjj": "dd/mm/aaaa",
+    "jj/mm/aaaa": "dd/mm/aaaa",
+    "dd/mm/aaaa": "dd/mm/aaaa",
+    "mm/dd/yyyy": "dd/mm/aaaa"
+  },
+  
+  "xml": {
+    "changes": "Cambios",
+    "dailyChanges": "Cambios Diarios",
+    "weeklyChanges": "Cambios Semanales", 
+    "monthlyChanges": "Cambios Mensuales",
+    "yearlyChanges": "Cambios Anuales",
+    "overallChanges": "Cambios Generales",
+    "addedUsers": "Usuarios Añadidos",
+    "leftUsers": "Usuarios Eliminados",
+    "leftUsersTitle": "Fecha de salida",
+    "changedUsers": "Usuarios Modificados",
+    "oldUsername": "Nombre de Usuario Anterior",
+    "newUsername": "Nombre de Usuario Nuevo",
+    "date": "Fecha",
+    "loadFailed": "No se pudieron cargar los datos de cambios",
+    "noChanges": "No se detectaron cambios para este período",
+    "showDetails": "Mostrar Detalles",
+    "hideDetails": "Ocultar Detalles",
+    "daily": "Diario",
+    "weekly": "Semanal",
+    "monthly": "Mensual", 
+    "yearly": "Anual",
+    "noDataFound": "No se encontraron datos XML para este período",
+    "filters": {
+      "top": "Top",
+      "other": "Otro",
+      "team": "Equipo"
+    }
+  }
+}

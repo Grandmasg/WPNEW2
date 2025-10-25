@@ -1,0 +1,85 @@
+<div class="container">
+  <div style="padding-bottom: 1rem;"></div>
+  
+  <app-date-input-group 
+    [selectedDate]="selectedDate"
+    [offset]="offset"
+    viewType="yearly"
+    (dateChange)="onDateChange($event)"
+    (offsetChange)="onOffsetChange($event)">
+  </app-date-input-group>
+  
+  <div class="content">
+    <div class="alert d-flex flex-wrap justify-content-between align-items-center"
+         [ngClass]="{'alert-primary': currentTheme === 'dark', 'alert-light': currentTheme === 'light'}">
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-regular fa-calendar"></i> {{ 'common.showing' | translate }} <strong>{{ 'nav.yearly' | translate }}</strong> {{ 'common.dataFor' | translate }}: 
+        <strong>
+          <ng-container *ngIf="xmlDateRange?.current && xmlDateRange?.previous">
+            {{ formatDateString(xmlDateRange.previous || null) }} {{ 'common.to' | translate }} {{ formatDateString(xmlDateRange.current || null) }}
+          </ng-container>
+          <ng-container *ngIf="xmlDateRange?.current && !xmlDateRange?.previous">
+            {{ formatDateString(xmlDateRange.current || null) }}
+          </ng-container>
+          <ng-container *ngIf="!(xmlDateRange?.current) && startDate && endDate">
+            {{ formatDateString(startDate) }} {{ 'common.to' | translate }} {{ formatDateString(endDate) }}
+          </ng-container>
+          <ng-container *ngIf="!(xmlDateRange?.current) && !(startDate && endDate)">
+            {{ getFormattedDate() }}
+          </ng-container>
+        </strong>
+      </div>
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-solid fa-users"></i> {{ 'common.team' | translate }}: <strong>{{ teamname === '-' ? ('nav.all' | translate) : teamname }}</strong>
+      </div>
+      <div class="mb-1 mb-md-0">
+        <i class="fa-solid fa-search"></i> {{ 'common.searchFilter' | translate }}: <strong>{{ searchText || ('common.none' | translate) }}</strong>
+      </div>
+    </div>
+    
+    <!-- XML Changes Tables - Only show when there's data -->
+    <app-xml-changes 
+      *ngIf="xmlChanges && xmlChanges.length > 0"
+      [isLoading]="xmlLoading" 
+      [hasError]="false" 
+      [changes]="getFormattedChanges()" 
+      [date]="selectedDate" 
+      [team]="teamname" 
+      [currentTheme]="currentTheme" 
+      [offset]="offset" 
+      [showSummary]="true" 
+      [xmlData]="xmlChanges" 
+      [skipAutoLoad]="true" 
+      [parentLoaded]="!isLoading">
+    </app-xml-changes>
+    
+    <app-stats-table 
+      [data]="stats" 
+      [isLoading]="isLoading" 
+      [hasError]="hasError"
+      [viewType]="'yearly'"
+      [searchTerm]="searchText"
+      [currentTheme]="currentTheme"
+      [xmlData]="xmlChanges"
+      (pageChange)="onTablePageChange($event)"
+      (sortChange)="onSortChange($event)">
+    </app-stats-table>
+
+    <!-- Highcharts graph added, uniform with monthly -->
+    <app-highcharts-graph
+      #chart
+      [period]="'yearly'"
+      [offset]="offset"
+      [team]="teamname"
+      [currentTheme]="currentTheme"
+      [tablePageIndex]="currentPageIndex"
+      [tablePageSize]="currentPageSize"
+      [totalItems]="stats.length || 0"
+      [searchTerm]="searchText"
+      [skipAutoLoad]="false"
+      [defaultMetric]="'keys'"
+      [xmlData]="xmlChanges"
+      [sortInfo]="{ active: currentSortColumn || 'keys', direction: currentSortDirection || 'desc' }">
+    </app-highcharts-graph>
+  </div>
+</div>

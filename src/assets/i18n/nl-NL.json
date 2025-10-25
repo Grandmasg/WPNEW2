@@ -1,0 +1,186 @@
+{
+  "nav": {
+    "daily": "Dagelijks",
+    "weekly": "Wekelijks",
+    "monthly": "Maandelijks",
+    "yearly": "Jaarlijks",
+    "overall": "Totaal",
+    "xml": "XML",
+    "team": "Subteam",
+    "all": "Alle"
+  },
+  
+  "chart": {
+    "metric": "Metriek",
+    "type": "Grafiektype",
+    "height": "Hoogte",
+    "keys": "Toetsen",
+    "clicks": "Klikken",
+    "scrolls": "Scrollen",
+    "distance": "Afstand",
+    "download": "Download",
+    "upload": "Upload",
+    "uptime": "Actieve tijd",
+    "pulses": "Pulsen",
+    "column": "Kolom",
+    "bar": "Balk",
+    "line": "Lijn",
+    "byUser": "per gebruiker",
+    "sortedByRank": "gesorteerd op rang",
+    "sortedBy": "gesorteerd op",
+    "sortedAlphabetically": "alfabetisch gesorteerd",
+    "loadError": "Fout bij het laden van grafiekgegevens. Probeer het opnieuw.",
+    "refresh": "Vernieuwen",
+    "keysAxis": "Toetsaanslagen",
+    "clicksAxis": "Muis Klikken",
+    "scrollsAxis": "Scrollen",
+    "distanceKmAxis": "Afstand (km)",
+    "distanceMiAxis": "Afstand (mijlen)",
+    "downloadAxis": "Download (MB)",
+    "uploadAxis": "Upload (MB)",
+    "uptimeAxis": "Actieve tijd (uren)",
+    "pulsesAxis": "Pulsen",
+    "generic": "Waarde",
+    "loadingData": "Grafiekgegevens laden...",
+    "errorLoading": "Fout bij laden grafiekgegevens",
+    "tryAgainLater": "Probeer het later opnieuw",
+    "noDataAvailable": "Geen gegevens beschikbaar",
+    "noRecordsFound": "Geen records gevonden voor de geselecteerde criteria",
+    "noData": "Geen gegevens"
+  },
+  
+  "common": {
+    "loading": "Laden...",
+    "error": "Fout",
+    "noData": "Geen gegevens beschikbaar",
+    "search": "Zoeken",
+    "showing": "Toont",
+    "dataFor": "gegevens voor",
+    "size": "Grootte",
+    "loadingData": "Gegevens worden geladen",
+    "errorLoadingData": "Fout bij het laden van gegevens",
+    "none": "Geen",
+    "apply": "Toepassen",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd!",
+    "week": "Week",
+    "to": "t/m",
+    "searchFilter": "Zoekfilter",
+    "team": "Team",
+    "pageLoadedIn": "Pagina geladen in",
+    "approx50ms": "≈50ms",
+    "localStorageInfo": "Lokale browseropslag",
+    "key": "Sleutel",
+    "type": "Type",
+    "notAvailable": "Niet Beschikbaar",
+    "period": "Periode",
+    "clearLocalStorage": "Lokal opslag wissen"
+  },
+
+  "period": {
+    "today": "Vandaag",
+    "yesterday": "Gisteren",
+    "thisWeek": "Deze week",
+    "lastWeek": "Vorige week",
+    "thisMonth": "Deze maand",
+    "lastMonth": "Vorige maand",
+    "thisYear": "Dit jaar",
+    "lastYear": "Vorig jaar",
+    "current": "Huidig",
+    "previous": "Vorig",
+    "all": "Alle tijd"
+  },
+  
+  "stats": {
+    "username": "Gebruikersnaam",
+    "keys": "Toetsen",
+    "clicks": "Klikken",
+    "scrolls": "Scrollen",
+    "distance": "Afstand",
+    "download": "Download",
+    "upload": "Upload",
+    "uptime": "Actieve tijd",
+    "pulses": "Pulsen",
+    "rank": "Rang",
+    "total": "Totaal",
+    "users": "gebruikers",
+    "team": "Team",
+    "usernameDescription": "Gebruikersaccountnaam"
+  },
+
+  "popovers": {
+    "userDetails": "Gebruikersdetails",
+    "lastActivity": "Laatste activiteit",
+    "downloadVolume": "Downloadvolume",
+    "uploadVolume": "Uploadvolume",
+    "uptime": "Actieve tijd",
+    "pulses": "Pulsinformatie",
+    "lastPulse": "Laatste puls",
+    "valueChange": "Waardeverandering",
+    "rank": "Rang",
+    "rankChange": "Rangverandering",
+    "better": "(beter)",
+    "worse": "(slechter)",
+    "same": "hetzelfde",
+    "change": "Verandering"
+  },
+
+  "pagination": {
+    "showing": "Toont",
+    "of": "van",
+    "items": "items",
+    "itemsPerPage": "Items per pagina"
+  },
+
+  "units": {
+    "toggle": "Wissel tussen metrisch en imperiaal",
+    "metric": "Metrisch",
+    "imperial": "Imperiaal",
+    "hours": "uren"
+  },
+
+  "datepicker": {
+    "weekdays": "ma,di,wo,do,vr,za,zo",
+    "months": "jan,feb,mrt,apr,mei,jun,jul,aug,sep,okt,nov,dec",
+    "weekLabel": "Week",
+    "format": "dd-mm-jjjj"
+  },
+
+  "dateFormat": {
+    "dd-mm-jjjj": "dd-mm-jjjj",
+    "tt.mm.jjjj": "dd-mm-jjjj",
+    "jj/mm/aaaa": "dd-mm-jjjj",
+    "dd/mm/aaaa": "dd-mm-jjjj",
+    "mm/dd/yyyy": "dd-mm-jjjj"
+  },
+  
+  "xml": {
+    "changes": "Wijzigingen",
+    "dailyChanges": "Dagelijkse Wijzigingen",
+    "weeklyChanges": "Wekelijkse Wijzigingen", 
+    "monthlyChanges": "Maandelijkse Wijzigingen",
+    "yearlyChanges": "Jaarlijkse Wijzigingen",
+    "overallChanges": "Totale Wijzigingen",
+    "addedUsers": "Toegevoegde gebruikers",
+    "leftUsers": "Vertrokken gebruikers",
+    "leftUsersTitle": "Datum vertrokken",
+    "changedUsers": "Gewijzigde gebruikers",
+    "oldUsername": "Oude gebruikersnaam",
+    "newUsername": "Nieuwe gebruikersnaam",
+    "date": "Datum",
+    "loadFailed": "Kan wijzigingsgegevens niet laden",
+    "noChanges": "Geen wijzigingen gedetecteerd voor deze periode",
+    "showDetails": "Toon details",
+    "hideDetails": "Verberg details",
+    "daily": "Dagelijks",
+    "weekly": "Wekelijks",
+    "monthly": "Maandelijks",
+    "yearly": "Jaarlijks",
+    "noDataFound": "Geen XML-gegevens gevonden voor de geselecteerde datum",
+    "filters": {
+      "top": "Top",
+      "other": "Anders",
+      "team": "Team"
+    }
+  }
+}

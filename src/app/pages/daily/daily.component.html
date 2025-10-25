@@ -1,0 +1,84 @@
+<div class="container" #dailyContainer>
+  <div style="padding-bottom: 1rem;"></div>
+
+  <app-date-input-group 
+    [selectedDate]="selectedDate"
+    [offset]="offset"
+    viewType="daily"
+    (dateChange)="onDateChange($event)"
+    (offsetChange)="onOffsetChange($event)">
+  </app-date-input-group>
+
+  
+  <div class="content">
+    <div class="alert d-flex flex-wrap justify-content-between align-items-center"
+         [ngClass]="{'alert-primary': currentTheme === 'dark', 'alert-light': currentTheme === 'light'}">
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-regular fa-calendar"></i> {{ 'common.showing' | translate }} {{ 'common.dataFor' | translate }}: 
+        <strong>
+          <ng-container *ngIf="startDate && endDate">
+            {{ startDate }} - {{ endDate }}
+          </ng-container>
+          <ng-container *ngIf="!(startDate && endDate)">
+            {{ getFormattedDate(selectedDate) }}
+          </ng-container>
+        </strong>
+      </div>
+      <div class="me-3 mb-1 mb-md-0">
+        <i class="fa-solid fa-users"></i> {{ 'common.team' | translate }}: <strong>{{ teamname === '-' ? ('nav.all' | translate) : teamname }}</strong>
+      </div>
+      <div class="mb-1 mb-md-0">
+        <i class="fa-solid fa-search"></i> {{ 'common.searchFilter' | translate }}: <strong>{{ searchText || ('common.none' | translate) }}</strong>
+      </div>
+    </div>
+    
+    <!-- XML Changes Tables - Only show when there's actually data -->
+    <app-xml-changes 
+      [isLoading]="xmlLoading" 
+      [hasError]="false" 
+      [changes]="getFormattedChanges()" 
+      [date]="selectedDate" 
+      [team]="teamname" 
+      [currentTheme]="currentTheme" 
+      [offset]="offset" 
+      [showSummary]="true" 
+      [xmlData]="xmlChanges" 
+      [skipAutoLoad]="true" 
+      [parentLoaded]="!isLoading">
+    </app-xml-changes>
+
+    <!-- Add the stats table with revised attributes -->
+    <app-stats-table 
+      [data]="stats" 
+      [isLoading]="isLoading" 
+      [hasError]="hasError"
+      [viewType]="'daily'"
+      [searchTerm]="searchText"
+      [currentTheme]="currentTheme"
+      [xmlData]="xmlChanges"
+      [xmlChanges]="xmlChanges"
+      (pageChange)="onTablePageChange($event)"
+      (sortChange)="onSortChange($event)"
+      (searchChange)="onSearchChange($event)"
+      #statsTable>
+    </app-stats-table>
+
+    <!-- Highcharts graph added, uniform with monthly -->
+    <app-highcharts-graph
+      #chart
+      [period]="'daily'"
+      [offset]="offset"
+      [team]="teamname"
+      [currentTheme]="currentTheme"
+      [tablePageIndex]="currentPageIndex"
+      [tablePageSize]="currentPageSize"
+      [totalItems]="stats.length || 0"
+      [searchTerm]="searchText"
+      [skipAutoLoad]="false"
+      [defaultMetric]="'keys'"
+      [xmlData]="xmlChanges"
+      [statsData]="stats"
+      [sortInfo]="{ active: currentSortColumn || 'keys', direction: currentSortDirection || 'desc' }">
+    </app-highcharts-graph>
+  </div>
+</div>

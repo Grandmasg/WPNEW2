@@ -1,0 +1,43 @@
+<div ngbDropdown placement="top-end" class="d-inline-block">
+  <button class="btn btn-sm" type="button" id="storageInfoButton" 
+          ngbDropdownToggle 
+          [ngClass]="{'btn-outline-light': isDarkTheme(), 'btn-outline-dark': !isDarkTheme()}"
+          aria-label="{{ 'common.localStorageInfo' | translate }}">
+    <i class="fa-solid fa-database" aria-hidden="true"></i>
+    <span class="visually-hidden">{{ 'common.localStorageInfo' | translate }}</span>
+  </button>
+  <div ngbDropdownMenu aria-labelledby="storageInfoButton">
+    <div class="px-3 py-2">
+      <h6>{{ 'common.localStorageInfo' | translate }}</h6>
+      
+      <div *ngIf="!storageItems.length" class="text-muted">
+        {{ 'common.none' | translate }}
+      </div>
+      
+      <div *ngIf="storageItems.length" class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'common.key' | translate }}</th>
+              <th scope="col">{{ 'common.type' | translate }}</th>
+              <th scope="col">{{ 'common.size' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of storageItems">
+              <td>{{ item.key }}</td>
+              <td>{{ item.type }}</td>
+              <td>{{ item.size | number }} B</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2" class="text-end"><strong>{{ 'stats.total' | translate }}:</strong></td>
+              <td><strong>{{ totalSize | number }} B</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

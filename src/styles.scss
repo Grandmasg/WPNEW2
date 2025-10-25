@@ -1,1 +1,278 @@
-/* You can add global styles to this file, and also import other style files */
+/* Clean global styles - Bootstrap variables ONLY */
+
+// Import Font Awesome
+@use "@fortawesome/fontawesome-free/scss/fontawesome.scss" as fontawesome;
+@use "@fortawesome/fontawesome-free/scss/solid.scss" as fa-solid;
+@use "@fortawesome/fontawesome-free/scss/regular.scss" as fa-regular;
+@use "@fortawesome/fontawesome-free/scss/brands.scss" as fa-brands;
+
+// Import flag-icons (only the main CSS, not the full package to avoid SVG duplicates)
+@import "flag-icons/css/flag-icons.min.css";
+
+// Import Lato font from @fontsource (lokale kopie, geen internet nodig)
+@import '@fontsource/lato/400.css';
+@import '@fontsource/lato/700.css';
+@import '@fontsource/lato/400-italic.css';
+
+// Bootswatch Flatly wordt geladen via angular.json VOOR deze file
+// Dus alle --bs-* variabelen zijn al beschikbaar
+
+// ALLEEN custom variabelen voor Highcharts (die CSS vars niet ondersteunt)
+html[data-bs-theme='light'] {
+  --bs-chart-grid-color: #e6e6e6;
+  --bs-chart-text-color: #333333;
+}
+
+html[data-bs-theme='dark'] {
+  --bs-chart-grid-color: var(--bs-border-color);
+  --bs-chart-text-color: var(--bs-body-color);
+  
+  // Ensure sufficient contrast in dark mode for containers
+  .stats-table-container,
+  .graph-container,
+  .chart-container {
+    // Force higher contrast text color in dark mode
+    color: #ecf0f1 !important; // Light gray with good contrast on dark backgrounds
+  }
+}
+
+/* Base styles */
+html, body {
+  height: 100%;
+  font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+body {
+  margin: 0;
+  font-size: 0.875rem;
+}
+
+/* Button close filter toggle for theme */
+button.btn-close {
+  filter: invert(1);
+}
+
+html[data-bs-theme='dark'] button.btn-close {
+  filter: invert(0) grayscale(100%) brightness(200%);
+}
+
+/* Form controls - gebruik ALLEEN Bootstrap variabelen */
+.form-control,
+.form-select {
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  
+  &:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+  }
+  
+  &::placeholder {
+    color: var(--bs-secondary-color);
+  }
+}
+
+/* Pagination - gebruik ALLEEN Bootstrap variabelen */
+.pagination {
+  .page-link {
+    color: var(--bs-body-color);
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+    transition: all 0.2s ease-in-out;
+    
+    &:hover {
+      color: var(--bs-primary-text-emphasis);
+      background-color: var(--bs-primary);
+      border-color: var(--bs-primary);
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+    }
+  }
+  
+  .page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: var(--bs-primary-text-emphasis);
+  }
+  
+  .page-item.disabled .page-link {
+    color: var(--bs-secondary-color);
+    background-color: var(--bs-tertiary-bg);
+    border-color: var(--bs-border-color);
+  }
+}
+
+/* Page size selector */
+select.form-select-sm {
+  color: var(--bs-body-color);
+  background-color: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, background-color 0.15s ease-in-out;
+  
+  &:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+  }
+  
+  &:hover {
+    border-color: var(--bs-primary);
+    background-color: var(--bs-secondary-bg);
+  }
+  
+  option {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+  }
+}
+
+/* Dropdown menus */
+.dropdown-menu {
+  background-color: var(--bs-body-bg);
+  border-color: var(--bs-border-color);
+  
+  .dropdown-item {
+    color: var(--bs-body-color);
+    
+    &:hover,
+    &:focus {
+      background-color: var(--bs-tertiary-bg);
+    }
+    
+    &.active,
+    &:active {
+      color: var(--bs-primary-text-emphasis);
+      background-color: var(--bs-primary);
+    }
+  }
+}
+
+/* Button primary - gebruik Bootstrap variabelen */
+.btn-primary {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+  
+  &:hover,
+  &:focus,
+  &:active {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    color: var(--bs-primary-text-emphasis);
+  }
+  
+  &.disabled,
+  &:disabled {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+    opacity: 0.65;
+  }
+}
+
+/* Utility classes */
+.pagination-spaced {
+  padding: 0.5rem 1.25rem;
+  margin: 0.5rem 0;
+  border-radius: 0.5rem;
+  background: transparent;
+}
+
+@media (max-width: 576px) {
+  .pagination-spaced {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+}
+
+.items-per-page-container {
+  margin-left: 0.5rem;
+}
+
+/* Dark theme - gebruik een DONKERDER grijs voor betere zichtbaarheid */
+html[data-bs-theme='dark'] {
+  --bs-border-color: #495057 !important;
+  
+  .form-control,
+  .form-select,
+  .input-group-text,
+  .pagination .page-link,
+  .dropdown-menu,
+  .card,
+  .alert,
+  .btn,
+  .table,
+  .stats-table-container,
+  .graph-container {
+    border-color: #495057 !important;
+  }
+}
+
+/* Badge alternating animation - smooth crossfade */
+.badge-alternating {
+  position: relative;
+  display: inline-block;
+  min-width: 35px;
+  height: 14px;
+  padding: 4px 4px !important;
+  text-align: center;
+  line-height: 14px; 
+}
+
+.badge-alternating .badge-text-1,
+.badge-alternating .badge-text-2 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.badge-alternating .badge-text-1 {
+  animation: crossfade-out 4s ease-in-out infinite;
+}
+
+.badge-alternating .badge-text-2 {
+  animation: crossfade-in 4s ease-in-out infinite;
+}
+
+@keyframes crossfade-out {
+  0% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes crossfade-in {
+  0% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

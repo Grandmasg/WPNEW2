@@ -1,0 +1,96 @@
+.navbar {
+  background-color: var(--bs-navbar-bg);
+  color: var(--bs-navbar-color);
+
+  .nav-link.active {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--bs-body-color);
+    border-radius: 0.25rem;
+    font-weight: 500;
+  }
+
+  &.fixed-top,
+  &.fixed-bottom {
+    z-index: 1030;
+  }
+}
+
+.main-content {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  padding-top: 72px;
+  padding-bottom: 70px;
+  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+}
+
+button, 
+.btn, 
+a.nav-link {
+  min-height: 38px;
+  min-width: 38px;
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+.scrollable-menu {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+// Make dropdown buttons look like dropdown links
+.dropdown-menu {
+  button.dropdown-item {
+    text-align: left;
+    width: 100%;
+    border: none;
+    background: none;
+    cursor: pointer;
+    
+    &:hover {
+      background-color: var(--bs-dropdown-link-hover-bg);
+      color: var(--bs-dropdown-link-hover-color);
+    }
+    
+    &.active {
+      background-color: var(--bs-dropdown-link-active-bg);
+      color: var(--bs-dropdown-link-active-color);
+    }
+  }
+}
+
+.navbar-nav .nav-link.active {
+  background-color: rgba(0, 0, 0, 0.1);
+  color: var(--bs-body-color);
+  border-radius: 0.25rem;
+  font-weight: 500;
+}
+
+// Add styles for the language flags
+.fi {
+  width: 1.2em;
+  height: 1.2em;
+  line-height: 1em;
+  object-fit: contain;
+  border-radius: 50%;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+// Language dropdown styles
+.dropdown-item {
+  cursor: pointer;
+  
+  &.active {
+    font-weight: bold;
+  }
+  
+  .fi {
+    margin-right: 0.5rem;
+  }
+}

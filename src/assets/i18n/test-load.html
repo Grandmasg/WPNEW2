@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Translation Files Check</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        pre { background-color: #f5f5f5; padding: 10px; border-radius: 4px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Translation Files Check</h1>
+    <p>This page checks if translation files can be loaded from the assets directory.</p>
+    
+    <h2>English (en-US)</h2>
+    <div id="en-result"></div>
+    <pre id="en-content"></pre>
+    
+    <h2>German (de-DE)</h2>
+    <div id="de-result"></div>
+    <pre id="de-content"></pre>
+    
+    <h2>Dutch (nl-NL)</h2>
+    <div id="nl-result"></div>
+    <pre id="nl-content"></pre>
+    
+    <script>
+        // Function to test loading a translation file
+        async function testLoadTranslation(lang, resultId, contentId) {
+            const resultElem = document.getElementById(resultId);
+            const contentElem = document.getElementById(contentId);
+            
+            try {
+                const response = await fetch(`/assets/i18n/${lang}.json`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                resultElem.innerHTML = `<span class="success">✓ Success! ${lang}.json loaded correctly.</span>`;
+                contentElem.textContent = JSON.stringify(data, null, 2).substring(0, 500) + '...';
+            } catch (error) {
+                resultElem.innerHTML = `<span class="error">✗ Error loading ${lang}.json: ${error.message}</span>`;
+                contentElem.textContent = 'Failed to load file.';
+            }
+        }
+        
+        // Test each language
+        window.onload = function() {
+            testLoadTranslation('en-US', 'en-result', 'en-content');
+            testLoadTranslation('de-DE', 'de-result', 'de-content');
+            testLoadTranslation('nl-NL', 'nl-result', 'nl-content');
+        };
+    </script>
+</body>
+</html>

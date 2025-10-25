@@ -1,0 +1,107 @@
+<div class="container">
+  <div class="row">
+    <div class="graph-container" [attr.id]="'chart-container-' + period + '-' + offset">
+      <!-- Chart controls moved inside container -->
+      <div class="chart-controls">
+        <div class="d-flex flex-wrap justify-content-between chart-controls-container">
+        <div class="chart-control-group">
+          <label id="chart-metric-label">{{ 'chart.metric' | translate }}:</label>
+          <div class="btn-group" role="group" aria-labelledby="chart-metric-label">
+            <button 
+              *ngFor="let metric of availableMetrics"
+              type="button" 
+              class="btn metric-btn" 
+              [class.btn-primary]="chartMetric === metric.value"
+              [class.btn-secondary]="chartMetric !== metric.value"
+              [attr.data-metric]="metric.value"
+              [attr.aria-pressed]="chartMetric === metric.value"
+              [attr.aria-label]="(metric.label | translate)"
+              (click)="directChangeMetric(metric.value)">
+              {{ metric.label | translate }}
+            </button>
+          </div>
+        </div>
+        
+        <div class="chart-control-group">
+          <label id="chart-type-label">{{ 'chart.type' | translate }}:</label>
+          <div class="btn-group" role="group" aria-labelledby="chart-type-label">
+            <button 
+              *ngFor="let type of chartTypes" 
+              type="button" 
+              class="btn type-btn" 
+              [class.btn-primary]="chartType === type.value"
+              [class.btn-secondary]="chartType !== type.value"
+              [attr.data-type]="type.value"
+              [attr.aria-pressed]="chartType === type.value"
+              [attr.aria-label]="(type.label | translate)"
+              (click)="directChangeType(type.value)">
+              {{ type.label | translate }}
+            </button>
+          </div>
+        </div>
+        
+        <div class="chart-control-group">
+          <label id="chart-height-label">{{ 'chart.height' | translate }}:</label>
+          <div class="btn-group" role="group" aria-labelledby="chart-height-label">
+            <button 
+              *ngFor="let height of chartHeightOptions" 
+              type="button" 
+              class="btn height-btn" 
+              [class.btn-primary]="chartHeight === height"
+              [class.btn-secondary]="chartHeight !== height"
+              [attr.data-height]="height"
+              [attr.aria-pressed]="chartHeight === height"
+              [attr.aria-label]="height + ' pixels'"
+              (click)="directChangeHeight(height)">
+              {{ height }}px
+            </button>
+          </div>
+        </div>
+        
+
+      </div>
+    
+      <div *ngIf="isLoading" class="loading-overlay">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <!-- Chart wrapper with reserved height to prevent CLS -->
+      <div class="chart-wrapper" [style.min-height.px]="chartHeight">
+      <highcharts-chart 
+        [constructorType]="'chart'"
+        [options]="chartOptions"
+        [(update)]="updateFlag"
+        [ngStyle]="{
+          'width': '100%',
+          'min-height': '300px',
+          'display': 'block',
+          'background': 'transparent',
+          'z-index': 2,
+          'padding-top': '0.5rem',
+          'margin-top': '0.5rem',
+          'border-top': currentTheme === 'dark' ? '1px solid #444' : '1px solid #ccc'
+        }"
+        [attr.data-sort]="sortInfo.active + '-' + sortInfo.direction"
+      >
+      </highcharts-chart>
+      </div>
+      <!-- Fallback: if the chart is not visible -->
+      <div *ngIf="!isLoading && (!chartOptions || !chartOptions.series || chartOptions.series.length === 0)" style="position:absolute;top:50%;left:0;width:100%;text-align:center;color:#c00;z-index:3;transform:translateY(-50%);">
+        <b>Chart not available</b>
+      </div>
+      
+      <!-- Pagination BINNEN de graph-container -->
+      <app-pagination
+        *ngIf="fullData && fullData.length > 0"
+        [pageIndex]="tablePageIndex"
+        [pageSize]="tablePageSize"
+        [totalItems]="filteredTotalItems"
+        (pageChange)="onPaginationChange($event)"
+      ></app-pagination>
+    </div>
+
+    <!-- DEBUG: Test with minimal working chart -->
+    <!-- The test charts below have been removed, as the real chart now uses API data via chartOptions. -->
+  </div>
+</div>

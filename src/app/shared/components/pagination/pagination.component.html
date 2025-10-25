@@ -1,0 +1,128 @@
+<div class="pagination-container d-flex flex-wrap justify-content-between align-items-center">
+  <!-- Items per page selector -->
+  <div class="items-per-page-container mb-2 mb-md-0">
+    <label [attr.for]="dropdownId" class="me-2">Items per page:</label>
+    <div ngbDropdown class="dropdown">
+      <button 
+        ngbDropdownToggle
+        class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+        type="button"
+        [attr.id]="dropdownId"
+        aria-haspopup="true"
+        aria-expanded="false"
+        [attr.aria-label]="'Select items per page, currently ' + pageSize">
+        {{ pageSize }}
+      </button>
+      <div ngbDropdownMenu class="dropdown-menu" role="menu" [attr.aria-labelledby]="dropdownId">
+        <button class="dropdown-item" 
+           *ngFor="let size of pageSizes"
+           type="button"
+           role="menuitem"
+           [class.active]="size === pageSize"
+           [attr.aria-label]="'Show ' + size + ' items per page'"
+           [attr.aria-current]="size === pageSize ? 'true' : null"
+           (click)="selectPageSize(size)">
+          {{ size }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination info text -->
+  <div class="pagination-info mb-2 mb-md-0">
+    Showing {{ startItem }}-{{ endItem }} of {{ totalItems }} items
+  </div>
+  
+  <!-- Page navigation buttons -->
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-sm mb-0">
+      <!-- First page button -->
+      <li class="page-item" [class.disabled]="pageIndex === 0">
+        <button type="button" class="page-link" (click)="goToPage(0)" aria-label="First">
+          <span aria-hidden="true">&laquo;&laquo;</span>
+        </button>
+      </li>
+      
+      <!-- Previous page button -->
+      <li class="page-item" [class.disabled]="pageIndex === 0">
+        <button type="button" class="page-link" (click)="goToPage(pageIndex - 1)" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </button>
+      </li>
+      
+      <!-- Page number buttons (with ellipsis) -->
+      <ng-container *ngIf="totalPages <= 7">
+        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index" 
+            [class.active]="i === pageIndex">
+          <button type="button" class="page-link" [attr.aria-label]="'Go to page ' + (i + 1)" [attr.aria-current]="i === pageIndex ? 'page' : null" (click)="goToPage(i)">{{ i + 1 }}</button>
+        </li>
+      </ng-container>
+      
+      <ng-container *ngIf="totalPages > 7">
+        <!-- First page -->
+        <li class="page-item" [class.active]="pageIndex === 0">
+          <button type="button" class="page-link" aria-label="Go to page 1" [attr.aria-current]="pageIndex === 0 ? 'page' : null" (click)="goToPage(0)">1</button>
+        </li>
+        
+        <!-- Ellipsis or page 2 -->
+        <li class="page-item" *ngIf="pageIndex > 3" aria-hidden="true">
+          <span class="page-link disabled">...</span>
+        </li>
+        
+        <!-- Pages around current page -->
+        <ng-container *ngFor="let page of [].constructor(5); let i = index">
+          <ng-container *ngIf="pageIndex > 2 && pageIndex < totalPages - 3">
+            <li class="page-item" *ngIf="i >= 0 && i <= 4" 
+                [class.active]="pageIndex === pageIndex - 2 + i">
+              <button type="button" class="page-link" [attr.aria-label]="'Go to page ' + (pageIndex - 1 + i)" [attr.aria-current]="pageIndex === pageIndex - 2 + i ? 'page' : null" (click)="goToPage(pageIndex - 2 + i)">
+                {{ pageIndex - 1 + i }}
+              </button>
+            </li>
+          </ng-container>
+          
+          <ng-container *ngIf="pageIndex <= 2">
+            <li class="page-item" *ngIf="i >= 0 && i <= 4" 
+                [class.active]="i + 1 === pageIndex">
+              <button type="button" class="page-link" [attr.aria-label]="'Go to page ' + (i + 2)" [attr.aria-current]="i + 1 === pageIndex ? 'page' : null" (click)="goToPage(i + 1)">
+                {{ i + 2 }}
+              </button>
+            </li>
+          </ng-container>
+          
+          <ng-container *ngIf="pageIndex >= totalPages - 3">
+            <li class="page-item" *ngIf="i >= 0 && i <= 4" 
+                [class.active]="totalPages - 5 + i === pageIndex">
+              <button type="button" class="page-link" [attr.aria-label]="'Go to page ' + (totalPages - 4 + i)" [attr.aria-current]="totalPages - 5 + i === pageIndex ? 'page' : null" (click)="goToPage(totalPages - 5 + i)">
+                {{ totalPages - 4 + i }}
+              </button>
+            </li>
+          </ng-container>
+        </ng-container>
+        
+        <!-- Ellipsis or second-to-last page -->
+        <li class="page-item" *ngIf="pageIndex < totalPages - 4" aria-hidden="true">
+          <span class="page-link disabled">...</span>
+        </li>
+        
+        <!-- Last page -->
+        <li class="page-item" [class.active]="pageIndex === totalPages - 1">
+          <button type="button" class="page-link" [attr.aria-label]="'Go to page ' + totalPages" [attr.aria-current]="pageIndex === totalPages - 1 ? 'page' : null" (click)="goToPage(totalPages - 1)">{{ totalPages }}</button>
+        </li>
+      </ng-container>
+      
+      <!-- Next page button -->
+      <li class="page-item" [class.disabled]="pageIndex >= totalPages - 1">
+        <button type="button" class="page-link" (click)="goToPage(pageIndex + 1)" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </button>
+      </li>
+      
+      <!-- Last page button -->
+      <li class="page-item" [class.disabled]="pageIndex >= totalPages - 1">
+        <button type="button" class="page-link" (click)="goToPage(totalPages - 1)" aria-label="Last">
+          <span aria-hidden="true">&raquo;&raquo;</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</div>

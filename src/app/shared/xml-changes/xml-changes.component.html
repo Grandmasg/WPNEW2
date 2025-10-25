@@ -1,0 +1,182 @@
+<div class="card mb-1" *ngIf="hasChanges() || isLoading">
+  <div class="card-header d-flex justify-content-between align-items-center py-1">
+    <span class="fs-6">{{ getHeaderText() }}</span>
+    <div class="d-flex align-items-center">
+      <!-- Summary counts when collapsed -->
+      <div *ngIf="hasChanges() && !showDetails" class="me-2 d-flex align-items-center">
+        <span *ngIf="addedUsers && addedUsers.length > 0" class="badge bg-success me-1" title="{{ 'xml.addedUsers' | translate }}">
+          <i class="fa-solid fa-user-plus me-1" aria-hidden="true"></i>{{ addedUsers.length }}
+        </span>
+        <span *ngIf="changedUsers && changedUsers.length > 0" class="badge bg-warning me-1" title="{{ 'xml.changedUsers' | translate }}">
+          <i class="fa-solid fa-user-edit me-1" aria-hidden="true"></i>{{ changedUsers.length }}
+        </span>
+        <span *ngIf="leftUsers && leftUsers.length > 0" class="badge bg-danger me-1" title="{{ 'xml.leftUsers' | translate }}">
+          <i class="fa-solid fa-user-minus me-1" aria-hidden="true"></i>{{ leftUsers.length }}
+        </span>
+      </div>
+      
+      <!-- Toggle button -->
+      <button class="btn btn-sm py-0 px-2" 
+              type="button"
+              [ngClass]="currentTheme === 'dark' ? 'btn-outline-light' : 'btn-outline-secondary'"
+              (click)="toggleDetails()" 
+              *ngIf="hasChanges()"
+              [attr.aria-expanded]="showDetails"
+              aria-controls="xmlChangesDetails">
+        <i class="fa-solid" [ngClass]="{'fa-chevron-up': showDetails, 'fa-chevron-down': !showDetails}" aria-hidden="true"></i>
+        <span class="ms-1" style="font-size: 0.7rem;">{{ (showDetails ? 'xml.hideDetails' : 'xml.showDetails') | translate }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Debug output to immediately see data structure -->
+  <div *ngIf="!hasChanges() && !isLoading && xmlChanges && xmlChanges.length === 0" class="alert alert-warning m-1 p-1">
+    <span style="font-size: 0.75rem;">No changes found. Debug info: xmlChanges: {{ xmlChanges.length || 0 }}, added: {{ addedUsers.length || 0 }}, left: {{ leftUsers.length || 0 }}</span>
+  </div>
+
+  <div class="card-body p-0" id="xmlChangesDetails">
+    <!-- Loading state -->
+    <div *ngIf="isLoading" class="text-center my-2 py-1" aria-live="polite">
+      <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+      <span class="ms-1">{{ 'common.loading' | translate }}</span>
+    </div>
+    
+    <!-- Error state -->
+    <div *ngIf="hasError" class="alert alert-danger m-2 py-2" role="alert">
+      <i class="fa-solid fa-exclamation-triangle me-1" aria-hidden="true"></i>
+      {{ 'xml.loadFailed' | translate }}
+    </div>
+    
+    <!-- No changes state -->
+    <div *ngIf="!isLoading && !hasError && !hasChanges()" class="alert alert-info m-2 py-2" role="alert">
+      <i class="fa-solid fa-info-circle me-1" aria-hidden="true"></i>
+      {{ 'xml.noChanges' | translate }}
+    </div>
+
+    <!-- Changes content -->
+    <div *ngIf="!isLoading && !hasError && hasChanges()" 
+         [style.display]="showDetails ? 'block' : 'none'"
+         class="xml-changes-content p-2">
+      
+      <!-- Added Users -->
+      <div class="mb-3" *ngIf="addedUsers && addedUsers.length > 0">
+        <div class="ps-2 py-1 border-start border-success border-3">
+          <span class="fw-bold text-success">
+            <i class="fa-solid fa-user-plus me-1" aria-hidden="true"></i>
+            {{ 'xml.addedUsers' | translate }} ({{ addedUsers.length }})
+          </span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover xml-table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'xml.date' | translate }} {{ 'xml.addedUsers' | translate }}</th>
+                <th scope="col">{{ 'stats.username' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.keys' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.clicks' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.scrolls' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.distance' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.download' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.upload' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.uptime' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.pulses' | translate }}</th>
+                <th scope="col">{{ 'stats.team' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of addedUsers">
+                <td>{{ user.datum || '' }}</td>
+                <td>{{ user.Username }}</td>
+                <td class="text-end">{{ formatNumber(user.Keys1) }}</td>
+                <td class="text-end">{{ formatNumber(user.Clicks) }}</td>
+                <td class="text-end">{{ formatNumber(user.Scrolls) }}</td>
+                <td class="text-end">{{ formatNumber(user.Distance) }}</td>
+                <td class="text-end">{{ formatNumber(user.Download) }}</td>
+                <td class="text-end">{{ formatNumber(user.Upload) }}</td>
+                <td class="text-end">{{ formatUptime(user.UptimeSeconds) }}</td>
+                <td class="text-end">{{ formatNumber(user.Pulses) }}</td>
+                <td>{{ user.Team || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Changed Users - moved back to middle position -->
+      <div class="mb-2" *ngIf="changedUsers && changedUsers.length > 0">
+        <div class="ps-2 py-1 border-start border-warning border-3">
+          <small class="fw-bold text-warning">
+            <i class="fa-solid fa-user-edit me-1" aria-hidden="true"></i>
+            {{ 'xml.changedUsers' | translate }} ({{ changedUsers.length }})
+          </small>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'xml.date' | translate }} {{ 'xml.changedUsers' | translate }}</th>
+                <th scope="col">{{ 'xml.oldUsername' | translate }}</th>
+                <th scope="col">{{ 'xml.newUsername' | translate }}</th>
+                <th scope="col">{{ 'stats.team' | translate }}</th>
+                <th scope="col">ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of changedUsers">
+                <td>{{ user.datum || '' }}</td>
+                <td>{{ user.OldUsername }}</td>
+                <td>{{ user.NewUsername }}</td>
+                <td>{{ user.Team || '-' }}</td>
+                <td>{{ user.UserID || '' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Left Users -->
+      <div class="mb-2" *ngIf="leftUsers && leftUsers.length > 0">
+        <div class="ps-2 py-1 border-start border-danger border-3">
+          <small class="fw-bold text-danger-emphasis">
+            <i class="fa-solid fa-user-minus me-1" aria-hidden="true"></i>
+            {{ 'xml.leftUsers' | translate }} ({{ leftUsers.length }})
+          </small>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm table-hover">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'xml.leftUsersTitle' | translate }}</th>
+                <th scope="col">{{ 'stats.username' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.keys' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.clicks' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.scrolls' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.distance' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.download' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.upload' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.uptime' | translate }}</th>
+                <th scope="col" class="text-end">{{ 'stats.pulses' | translate }}</th>
+                <th scope="col">{{ 'stats.team' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of leftUsers">
+                <td>{{ user.datum || '' }}</td>
+                <td>{{ user.Username }}</td>
+                <td class="text-end">{{ formatNumber(user.Keys1) }}</td>
+                <td class="text-end">{{ formatNumber(user.Clicks) }}</td>
+                <td class="text-end">{{ formatNumber(user.Scrolls) }}</td>
+                <td class="text-end">{{ formatNumber(user.Distance) }}</td>
+                <td class="text-end">{{ formatNumber(user.Download) }}</td>
+                <td class="text-end">{{ formatNumber(user.Upload) }}</td>
+                <td class="text-end">{{ formatUptime(user.UptimeSeconds) }}</td>
+                <td class="text-end">{{ formatNumber(user.Pulses) }}</td>
+                <td>{{ user.Team || '-' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
