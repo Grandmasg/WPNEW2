@@ -94,17 +94,13 @@ export class MonthlyComponent implements OnInit, OnDestroy, AfterViewInit {
       const newTeamname = params['team'] || '-';
       const newSearchText = params['search'] || '';
 
-      if (newOffset !== this.offset || newTeamname !== this.teamname || newSearchText !== this.searchText) {
-        this.offset = newOffset;
-        this.teamname = newTeamname;
-        this.searchText = newSearchText;
+      this.offset = newOffset;
+      this.teamname = newTeamname;
+      this.searchText = newSearchText;
 
-        this.updateSelectedDate();
-        this.loadData();
-        this.loadXmlChanges();
-      } else {
-        this.debugService.log('Monthly', 'Parameters unchanged, skipping data reload.');
-      }
+      this.updateSelectedDate();
+      this.loadData();
+      this.loadXmlChanges();
     });
 
     this.themeSubscription = this.themeService.currentTheme$.subscribe((theme: ThemeMode) => {
