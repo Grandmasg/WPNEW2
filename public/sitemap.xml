@@ -3,7 +3,7 @@
   <!-- Main pages -->
   <url>
     <loc>https://www.grandmasg.nl/</loc>
-    <lastmod>2025-10-25</lastmod>
+    <lastmod>2025-11-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -11,7 +11,7 @@
   <!-- Daily stats -->
   <url>
     <loc>https://www.grandmasg.nl/s/daily/0/-</loc>
-    <lastmod>2025-10-25</lastmod>
+    <lastmod>2025-11-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
@@ -19,7 +19,7 @@
   <!-- Weekly stats -->
   <url>
     <loc>https://www.grandmasg.nl/s/weekly/0/-</loc>
-    <lastmod>2025-10-25</lastmod>
+    <lastmod>2025-11-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -27,7 +27,7 @@
   <!-- Monthly stats -->
   <url>
     <loc>https://www.grandmasg.nl/s/monthly/0/-</loc>
-    <lastmod>2025-10-25</lastmod>
+    <lastmod>2025-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -35,7 +35,7 @@
   <!-- Yearly stats -->
   <url>
     <loc>https://www.grandmasg.nl/s/yearly/0/-</loc>
-    <lastmod>2025-10-25</lastmod>
+    <lastmod>2025-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -43,7 +43,7 @@
   <!-- Overall stats -->
   <url>
     <loc>https://www.grandmasg.nl/s/overall/0/-</loc>
-    <lastmod>2025-10-25</lastmod>
+    <lastmod>2025-11-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -51,7 +51,7 @@
   <!-- XML changes -->
   <url>
     <loc>https://www.grandmasg.nl/s/xml/0/-</loc>
-    <lastmod>2025-10-25</lastmod>
+    <lastmod>2025-11-07</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
