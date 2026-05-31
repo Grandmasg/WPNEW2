@@ -707,11 +707,18 @@ td .badge.bg-warning {
     text-align: right !important;
   }
 
-  /* Pulses column */
+  /* Words column */
   th:nth-child(10), td:nth-child(10) {
+    width: 70px !important;
+    max-width: 70px !important;
+    text-align: right !important;
+  }
+
+  /* Pulses column */
+  th:nth-child(11), td:nth-child(11) {
     width: 60px !important;
     max-width: 60px !important;
-    text-align: left !important;
+    text-align: right !important;
   }
 }
 
