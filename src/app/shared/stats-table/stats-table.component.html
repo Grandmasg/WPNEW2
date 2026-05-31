@@ -97,7 +97,7 @@
             {{ 'stats.uptime' | translate }}
             <i class="fa-solid" [ngClass]="getSortIcon('uptime')"></i>
           </th>
-          <th class="sortable d-none d-xl-table-cell"
+          <th class="sortable d-none"
               (click)="sort('words')"
               data-column="words"
               id="words-header">
@@ -550,7 +550,7 @@
                   </div>
               </div>
           </td>
-          <td class="d-none d-xl-table-cell">
+          <td class="d-none">
               {{ formatNumber(row['words'] || 0) }}
           </td>
           <td class="pulses-column d-none d-xl-table-cell" [ngbPopover]="pulsesPopover"
@@ -577,7 +577,7 @@
           <td class="d-none d-md-table-cell">{{ formatBytes(totalDownload) }}</td>
           <td class="d-none d-xl-table-cell">{{ formatBytes(totalUpload) }}</td>
           <td class="d-none d-lg-table-cell">{{ formatTime(totalUptime) }}</td>
-          <td class="d-none d-xl-table-cell">{{ formatNumber(totalWords) }}</td>
+          <td class="d-none">{{ formatNumber(totalWords) }}</td>
           <td class="d-none d-xl-table-cell">{{ formatNumber(totalPulses) }}</td>
         </tr>
       </tfoot>
