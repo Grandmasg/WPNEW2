@@ -1,7 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges, OnInit, AfterViewInit, ViewChild, Output, EventEmitter, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { UserDetailComponent } from '../user-detail/user-detail.component';
 import { LocalizationService } from '../services/localization.service';
 import { HighlightPipe } from '../pipes/highlight.pipe';
 import { StatsService } from '../services/stats.service';
@@ -114,6 +115,7 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
     private debugService: DebugService,
     private filterService: FilterService,
     private translateService: TranslateService,
+    private offcanvasService: NgbOffcanvas,
     private changeDetectorRef: ChangeDetectorRef
   ) {}
 
@@ -803,55 +805,15 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
 
   onUsernameClick(user: any): void {
     const userId = user.UserID || user.id;
-    const profileUrl = userId ? `https://whatpulse.org/stats/users/${userId}/` : null;
-    
-    if (profileUrl) {
-      // Open WhatPulse profile directly in a popup window
-      const popup = window.open(
-        profileUrl,
-        'whatpulse_profile',
-        'width=1200,height=800,scrollbars=yes,resizable=yes,toolbar=yes,location=yes,menubar=no,status=yes'
-      );
-      
-      if (popup) {
-        popup.focus();
-        this.debugService.log('StatsTable', `Opened profile popup for user: ${user.username || 'Unknown'}`);
-      } else {
-        // Popup was blocked - show fallback message
-        this.showPopupBlockedMessage(profileUrl, user.username || 'Unknown');
-      }
-    } else {
-      // No user ID available
-      this.debugService.warn('StatsTable', `No user ID available for: ${user.username || 'Unknown'}`);
-      alert(`Profile not available for user: ${user.username || 'Unknown'}`);
-    }
-  }
+    if (!userId) return;
 
-  private showPopupBlockedMessage(profileUrl: string, username: string): void {
-    const message = `
-Popup was blocked by your browser.
-
-To view ${username}'s profile, you can:
-1. Allow popups for this site and try again
-2. Copy this URL and open it manually: ${profileUrl}
-
-Would you like to copy the URL to your clipboard?`;
-
-    if (confirm(message)) {
-      // Copy URL to clipboard
-      navigator.clipboard.writeText(profileUrl).then(() => {
-        alert('Profile URL copied to clipboard!');
-      }).catch(() => {
-        // Fallback for older browsers
-        const textArea = document.createElement('textarea');
-        textArea.value = profileUrl;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        alert('Profile URL copied to clipboard!');
-      });
-    }
+    const ref = this.offcanvasService.open(UserDetailComponent, {
+      position: 'end',
+      panelClass: 'user-detail-panel'
+    });
+    ref.componentInstance.userId = userId;
+    ref.componentInstance.username = user.username || user.UsernameFull || '';
+    ref.componentInstance.currentTheme = this.currentTheme;
   }
 
   @ViewChild(MatPaginator) public paginator!: MatPaginator;

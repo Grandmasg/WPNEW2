@@ -389,6 +389,18 @@ export class ApiService {
   }
 
   /**
+   * Get enriched user detail from WhatPulse API (cached 1h on backend)
+   */
+  getUserDetail(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/user-detail.php?user_id=${userId}`).pipe(
+      catchError(error => {
+        this.debugService.error('ApiService', 'Error fetching user detail:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
    * Get team global ranking from WhatPulse API (cached 1h on backend)
    */
   getTeamRank(): Observable<any> {

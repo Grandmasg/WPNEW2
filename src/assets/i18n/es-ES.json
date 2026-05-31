@@ -46,6 +46,7 @@
   
   "common": {
     "loading": "Cargando...",
+    "memberSince": "Miembro desde",
     "error": "Error",
     "noData": "No hay datos disponibles",
     "search": "Buscar",
