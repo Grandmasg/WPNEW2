@@ -279,12 +279,14 @@ export class DailyComponent implements OnInit, AfterViewInit, OnDestroy {
           this.debugService.log('Daily', `Stats loaded, chart will use its own graph API for visualization`);
           
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {
           this.debugService.error('Daily', 'Error loading daily stats:', error);
           this.hasError = true;
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -351,12 +353,14 @@ export class DailyComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           
           this.xmlLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {
           this.debugService.error('Daily', 'Error loading XML changes:', error);
           this.xmlChanges = [];
           this.xmlLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }

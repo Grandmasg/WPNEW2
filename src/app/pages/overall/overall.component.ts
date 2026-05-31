@@ -276,12 +276,14 @@ export class OverallComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {
           this.debugService.error('Overall', 'Error loading overall stats:', error);
           this.hasError = true;
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -371,12 +373,14 @@ export class OverallComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           
           this.xmlLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {
           this.debugService.error('Overall', 'Error loading XML changes:', error);
           this.xmlChanges = [];
           this.xmlLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }

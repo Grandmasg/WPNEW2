@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DateInputGroupComponent } from '../../shared/date-input-group/date-input-group.component';
@@ -69,7 +69,8 @@ export class MonthlyComponent implements OnInit, OnDestroy, AfterViewInit {
     private statsService: StatsService,
     private translateService: TranslateService,
     private debugService: DebugService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private cdr: ChangeDetectorRef
   ) {
     this.handleExplicitSort = (e: Event) => {
       const customEvent = e as CustomEvent;
@@ -244,12 +245,14 @@ export class MonthlyComponent implements OnInit, OnDestroy, AfterViewInit {
           }
 
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {
           this.debugService.error('Monthly', 'Error loading monthly stats:', error);
           this.hasError = true;
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -281,6 +284,7 @@ export class MonthlyComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           
           this.xmlLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {
