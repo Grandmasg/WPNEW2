@@ -484,8 +484,12 @@ export class StatsService {
       UploadMB: item.UploadMB,
       UptimeSeconds: item.UptimeSeconds,
       
-      // Actief/inactief account
-      is_active: item.is_active !== undefined ? Number(item.is_active) : 1,
+      is_active:       item.is_active !== undefined ? Number(item.is_active) : 1,
+      is_premium:      item.is_premium !== undefined ? Number(item.is_premium) : 0,
+      date_joined:     item.date_joined ?? null,
+      first_pulse_date: item.first_pulse_date ?? null,
+      country_id:      item.country_id ?? null,
+      computer_count:  item.computer_count ?? null,
 
       // Preserve XML flag fields
       today: item.today,
