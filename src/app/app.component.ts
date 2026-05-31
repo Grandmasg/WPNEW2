@@ -4,10 +4,8 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
-import { filter, map, mergeMap, catchError } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { ThemeService, ThemeMode } from './shared/services/theme.service';
-import { HttpClient } from '@angular/common/http';
 import { TeamService, Team } from './shared/services/team.service';
 import { LocalizationService } from './shared/services/localization.service';
 import { DebugService } from './shared/services/debug.service';
@@ -62,6 +60,7 @@ export class AppComponent implements OnInit {
   isMetric: boolean = true;
   unitSystemLabel: string = 'Metric';
   appVersion: string = '';
+  currentYear: number = new Date().getFullYear();
 
   pageLoadTime: number = 0;
   fcpTime?: number;
@@ -77,8 +76,7 @@ export class AppComponent implements OnInit {
     private teamService: TeamService,
     private localizationService: LocalizationService,
     private versionService: VersionService,
-    private translateService: TranslateService, // Add TranslateService
-    private http: HttpClient, // Add HttpClient
+    private translateService: TranslateService,
     public debugService: DebugService,
     private pageTimingService: PageTimingService,
     private seoService: SeoService
@@ -234,30 +232,6 @@ export class AppComponent implements OnInit {
     // Add page transition event handler - improved version
     window.addEventListener('pageshow', this.handlePageShow.bind(this));
     
-    // Override default console.warn to suppress PageTransitionEvent logs
-    const originalConsoleWarn = console.warn;
-    console.warn = (...args) => {
-      // More thorough filtering for PageTransitionEvent warnings
-      if (this.shouldFilterWarning(args)) {
-        return; // Don't output anything for these events
-      }
-      
-      // Pass other warnings through to the original console.warn
-      originalConsoleWarn.apply(console, args);
-    };
-
-    // Also override console.log to catch PageTransitionEvent logs there
-    const originalConsoleLog = console.log;
-    console.log = (...args) => {
-      // Filter PageTransitionEvent logs
-      if (this.shouldFilterWarning(args)) {
-        return; // Don't output anything for these events
-      }
-      
-      // Pass other logs through
-      originalConsoleLog.apply(console, args);
-    };
-
     // Subscribe to page timing updates with enhanced metrics
     this.pageTimingService.timing$.subscribe(metrics => {
       // Use the metrics directly from the timing service
@@ -370,36 +344,6 @@ export class AppComponent implements OnInit {
       // Refresh current state if needed
       this.loadTeams();
     }
-  }
-
-  /**
-   * Helper method to determine if a console warning/log should be filtered
-   */
-  private shouldFilterWarning(args: any[]): boolean {
-    // Check if this is a PageTransitionEvent
-    if (args.length > 0) {
-      const firstArg = args[0];
-      
-      // Check for PageTransitionEvent object
-      if (typeof firstArg === 'object' && firstArg instanceof Event && firstArg.type === 'pageshow') {
-        return true;
-      }
-      
-      // Check for string containing 'pageshow' which might be from inject.js
-      if (typeof firstArg === 'string' && 
-          (firstArg.includes('PageTransitionEvent') || 
-           firstArg.includes('pageshow'))) {
-        return true;
-      }
-      
-      // Check for pageshow dump that includes isTrusted
-      if (typeof firstArg === 'string' && 
-          args.some(arg => typeof arg === 'object' && arg && 'isTrusted' in arg && 'type' in arg && arg.type === 'pageshow')) {
-        return true;
-      }
-    }
-    
-    return false;
   }
 
   loadTeams() {

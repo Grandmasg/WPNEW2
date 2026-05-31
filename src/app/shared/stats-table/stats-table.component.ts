@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, SimpleChanges, OnInit, AfterViewInit, ViewChild, Output, EventEmitter, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule, NgTemplateOutlet } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { LocalizationService } from '../services/localization.service';
