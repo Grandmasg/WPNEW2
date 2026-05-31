@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
@@ -22,7 +22,8 @@ interface TeamRank {
   standalone: true,
   imports: [CommonModule, TranslatePipe],
   templateUrl: './team-rank-banner.component.html',
-  styleUrl: './team-rank-banner.component.scss'
+  styleUrl: './team-rank-banner.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TeamRankBannerComponent implements OnInit {
   @Input() currentTheme: 'light' | 'dark' = 'light';
@@ -41,17 +42,19 @@ export class TeamRankBannerComponent implements OnInit {
     { key: 'distance', icon: 'fa-route',           label: 'stats.distance' },
   ];
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.apiService.getTeamRank().subscribe({
       next: (data) => {
         this.teamRank = data;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.hasError = true;
         this.isLoading = false;
+        this.cdr.markForCheck();
       }
     });
   }
