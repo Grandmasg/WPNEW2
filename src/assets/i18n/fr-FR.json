@@ -46,6 +46,7 @@
   
   "common": {
     "loading": "Chargement...",
+    "memberSince": "Membre depuis",
     "error": "Erreur",
     "noData": "Aucune donnée disponible",
     "search": "Rechercher",

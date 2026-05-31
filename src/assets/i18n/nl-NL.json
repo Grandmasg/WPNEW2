@@ -52,6 +52,7 @@
   
   "common": {
     "loading": "Laden...",
+    "memberSince": "Lid sinds",
     "error": "Fout",
     "noData": "Geen gegevens beschikbaar",
     "search": "Zoeken",

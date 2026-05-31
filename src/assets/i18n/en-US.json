@@ -52,6 +52,7 @@
   
   "common": {
     "loading": "Loading...",
+    "memberSince": "Member since",
     "error": "Error",
     "noData": "No data available",
     "search": "Search",

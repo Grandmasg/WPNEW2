@@ -1,0 +1,101 @@
+<div class="offcanvas-header" [ngClass]="{'bg-dark text-light': currentTheme === 'dark'}">
+  <div class="d-flex align-items-center gap-2">
+    <img *ngIf="user?.avatar" [src]="user.avatar" class="avatar-lg rounded-circle"
+         [alt]="username" (error)="$any($event.target).style.display='none'">
+    <div>
+      <h5 class="offcanvas-title mb-0">
+        {{ user?.username || username }}
+        <span *ngIf="user?.is_premium" class="badge bg-warning text-dark ms-1" title="Premium">
+          <i class="fa-solid fa-star"></i>
+        </span>
+      </h5>
+      <small class="text-muted" *ngIf="user?.date_joined">
+        {{ 'common.memberSince' | translate }}: {{ user.date_joined | date:'dd-MM-yyyy' }}
+      </small>
+    </div>
+  </div>
+  <button type="button" class="btn-close" [class.btn-close-white]="currentTheme === 'dark'"
+          (click)="activeOffcanvas.dismiss()"></button>
+</div>
+
+<div class="offcanvas-body">
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+    <p class="mt-2 text-muted">{{ 'common.loading' | translate }}</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="hasError" class="alert alert-danger">
+    <i class="fa-solid fa-triangle-exclamation me-2"></i>
+    Kon gebruikersdata niet laden.
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="!isLoading && !hasError && user">
+
+    <!-- Global ranks -->
+    <h6 class="section-title"><i class="fa-solid fa-globe me-1"></i> Wereldrang</h6>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+      <div *ngFor="let item of rankItems"
+           class="rank-pill"
+           [ngClass]="rankClass(getRank(item.key))"
+           [title]="item.label | translate">
+        <i class="fa-solid {{ item.icon }}"></i>
+        <span>#{{ getRank(item.key) ?? '—' }}</span>
+      </div>
+    </div>
+
+    <!-- Totals -->
+    <h6 class="section-title"><i class="fa-solid fa-chart-bar me-1"></i> Totalen (all-time)</h6>
+    <div class="stats-grid mb-3">
+      <div class="stat-item">
+        <span class="stat-label">Toetsen</span>
+        <span class="stat-value">{{ formatNumber(user.totals?.keys || 0) }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Klikken</span>
+        <span class="stat-value">{{ formatNumber(user.totals?.clicks || 0) }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Scrollen</span>
+        <span class="stat-value">{{ formatNumber(user.totals?.scrolls || 0) }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Woorden</span>
+        <span class="stat-value">{{ formatNumber(user.totals?.words || 0) }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Download</span>
+        <span class="stat-value">{{ formatBytes(user.totals?.download_mb || 0) }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Upload</span>
+        <span class="stat-value">{{ formatBytes(user.totals?.upload_mb || 0) }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Actieve tijd</span>
+        <span class="stat-value">{{ formatUptime(user.totals?.uptime_seconds || 0) }}</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Afstand</span>
+        <span class="stat-value">{{ formatNumber(user.totals?.distance_miles || 0) }} mi</span>
+      </div>
+    </div>
+
+    <!-- Computers -->
+    <h6 class="section-title" *ngIf="user.computers?.length">
+      <i class="fa-solid fa-computer me-1"></i> Computers ({{ user.computers.length }})
+    </h6>
+    <div *ngFor="let pc of user.computers" class="computer-item mb-2">
+      <i class="{{ osIcon(pc.os) }} me-2"></i>
+      <span>{{ pc.name }}</span>
+      <small class="text-muted ms-2" *ngIf="pc.last_pulse_date">
+        — {{ pc.last_pulse_date | date:'dd-MM-yyyy' }}
+      </small>
+      <span *ngIf="pc.is_archived" class="badge bg-secondary ms-1">Archief</span>
+    </div>
+
+  </ng-container>
+</div>
