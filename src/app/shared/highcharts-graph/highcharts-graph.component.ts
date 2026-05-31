@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
@@ -86,10 +86,11 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
   ]; // <-- Added chartTypes property
 
   constructor(
-    private apiService: ApiService, 
-    private translateService: TranslateService, 
+    private apiService: ApiService,
+    private translateService: TranslateService,
     private localizationService: LocalizationService,
-    private debugService: DebugService
+    private debugService: DebugService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -218,11 +219,13 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
           this.fullData = [];
         }
         this.isLoading = false;
+        this.cdr.markForCheck();
         this.internalSafeUpdateChart();
       },
       error: () => {
         this.fullData = [];
         this.isLoading = false;
+        this.cdr.markForCheck();
         this.showErrorChart('Error loading graph data');
       }
     });

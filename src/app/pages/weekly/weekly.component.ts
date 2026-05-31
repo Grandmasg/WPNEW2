@@ -506,6 +506,7 @@ export class WeeklyComponent implements OnInit, AfterViewInit, OnDestroy {
           this.debugService.log('Weekly', `Stats loaded, chart will use its own graph API for visualization`);
           
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
           this.debugService.log('Weekly', `loadData - Main stats loaded. Chart should update via @Input binding for searchTerm: "${this.searchText}"`);
 
@@ -514,6 +515,7 @@ export class WeeklyComponent implements OnInit, AfterViewInit, OnDestroy {
           this.debugService.error('Weekly', 'Error loading weekly stats:', error);
           this.hasError = true;
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -578,6 +580,7 @@ export class WeeklyComponent implements OnInit, AfterViewInit, OnDestroy {
           }
           
           this.xmlLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {

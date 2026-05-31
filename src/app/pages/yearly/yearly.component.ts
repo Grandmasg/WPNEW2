@@ -271,6 +271,7 @@ export class YearlyComponent implements OnInit, OnDestroy, AfterViewInit {
           }
 
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
           this.debugService.log('Yearly', `loadData - Main stats loaded. Chart should update via @Input binding for searchTerm: "${this.searchText}"`);
         },
@@ -278,6 +279,7 @@ export class YearlyComponent implements OnInit, OnDestroy, AfterViewInit {
           this.debugService.error('Yearly', 'Error loading yearly stats:', error);
           this.hasError = true;
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -325,12 +327,14 @@ export class YearlyComponent implements OnInit, OnDestroy, AfterViewInit {
           }
           
           this.xmlLoading = false;
+          this.cdr.markForCheck();
           this.checkAndMarkContentLoaded();
         },
         error: (error) => {
           this.debugService.error('Yearly', 'Error loading XML changes:', error);
           this.xmlChanges = [];
           this.xmlLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
