@@ -275,18 +275,20 @@ export class AppComponent implements OnInit {
     // Listen for realistic page load event from main content
     window.addEventListener('realistic-page-load', (event: any) => {
       if (event && event.detail && typeof event.detail.duration === 'number') {
-        this.pageLoadTime = event.detail.duration;
-        this.debugService.log('AppComponent', `Realistic page load event received: ${event.detail.duration}ms`);
+        setTimeout(() => {
+          this.pageLoadTime = event.detail.duration;
+          this.debugService.log('AppComponent', `Realistic page load event received: ${event.detail.duration}ms`);
+        });
       }
     });
-    
-    // Listen for content loaded events to get more accurate timing for SPA navigations
+
     window.addEventListener('route-content-loaded', (event: any) => {
       if (event && event.detail && typeof event.detail.duration === 'number') {
-        // Only update if this is a SPA navigation (not initial load)
         if (!event.detail.isInitialLoad) {
-          this.pageLoadTime = event.detail.duration;
-          this.debugService.log('AppComponent', `Route content loaded: ${event.detail.duration}ms`);
+          setTimeout(() => {
+            this.pageLoadTime = event.detail.duration;
+            this.debugService.log('AppComponent', `Route content loaded: ${event.detail.duration}ms`);
+          });
         }
       }
     });
