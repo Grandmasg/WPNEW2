@@ -6,7 +6,8 @@ import type * as Highcharts from 'highcharts';
 import { ApiService } from '../services/api.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
 import { LocalizationService } from '../services/localization.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user-detail',
@@ -49,12 +50,13 @@ export class UserDetailComponent implements OnInit {
 
   ngOnInit(): void {
     forkJoin({
-      detail:  this.apiService.getUserDetail(this.userId),
-      history: this.apiService.getUserHistory(this.userId, 30)
+      detail:  this.apiService.getUserDetail(this.userId).pipe(catchError(() => of(null))),
+      history: this.apiService.getUserHistory(this.userId, 30).pipe(catchError(() => of({ data: [] })))
     }).subscribe({
       next: ({ detail, history }) => {
         this.user = detail;
         this.historyData = history?.data ?? [];
+        if (!detail) { this.hasError = true; this.isLoading = false; this.cdr.markForCheck(); return; }
         this.buildChart();
         this.isLoading = false;
         this.cdr.markForCheck();
