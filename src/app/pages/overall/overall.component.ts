@@ -465,7 +465,7 @@ export class OverallComponent implements OnInit, AfterViewInit, OnDestroy {
     return {
       changes: {
         added: this.xmlChanges.filter(u => u.category === 'added'),
-        changed: this.xmlChanges.filter(u => u.category === 'changed'),
+        changed: [], // tijdelijk verborgen (UTF-8 fix in behandeling)
         left: this.xmlChanges.filter(u => u.category === 'left')
       }
     };
