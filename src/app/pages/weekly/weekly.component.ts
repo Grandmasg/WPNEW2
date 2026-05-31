@@ -6,6 +6,7 @@ import { StatsTableComponent } from '../../shared/stats-table/stats-table.compon
 import { StatsService, StatRecord } from '../../shared/services/stats.service';
 import { XmlChangesComponent } from '../../shared/xml-changes/xml-changes.component';
 import { HighchartsGraphComponent } from '../../shared/highcharts-graph/highcharts-graph.component';
+import { TeamRankBannerComponent } from '../../shared/team-rank-banner/team-rank-banner.component';
 import { DebugService } from '../../shared/services/debug.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { TranslateService } from '../../shared/services/translate.service';
@@ -21,6 +22,7 @@ import { Subscription } from 'rxjs';
     StatsTableComponent,
     XmlChangesComponent,
     HighchartsGraphComponent,
+    TeamRankBannerComponent,
     TranslatePipe
   ],
   templateUrl: './weekly.component.html',

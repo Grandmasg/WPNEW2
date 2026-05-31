@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
@@ -389,27 +389,15 @@ export class ApiService {
   }
 
   /**
-   * Build URL helper
+   * Get team global ranking from WhatPulse API (cached 1h on backend)
    */
-  private buildUrl(endpoint: string, offset: string = '0', team: string = '-', search?: string): string {
-    // Make sure offset is explicitly included as a query parameter
-    let url = `${this.baseUrl}/${endpoint}`;
-    
-    // Add Offset as query parameter (capitalized to match API expectations)
-    url += `?Offset=${offset}`;
-    
-    // Add team parameter if not default (capitalizing "Team" for consistency)
-    if (team !== '-') {
-      url += `&Team=${team}`;
-    }
-    
-    // Add search parameter if provided
-    if (search && search.trim() !== '') {
-      url += `&search=${encodeURIComponent(search)}`;
-    }
-    
-    this.debugService.log('ApiService', `Built URL: ${url}`);
-    return url;
+  getTeamRank(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/team-rank.php`).pipe(
+      catchError(error => {
+        this.debugService.error('ApiService', 'Error fetching team rank:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
   /**
