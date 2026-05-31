@@ -16,6 +16,7 @@ import { PaginationComponent } from '../components/pagination/pagination.compone
 export interface StatRecord {
   id: number;
   name: string;
+  username: string;
   keys: number;
   clicks: number;
   scrolls: number;
@@ -24,6 +25,8 @@ export interface StatRecord {
   upload: string;
   uptime: string;
   pulses: number;
+  words: number;
+  avatar: string;
   [key: string]: any;
 }
 
@@ -82,6 +85,7 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
   totalUpload: number = 0;
   totalUptime: number = 0;
   totalPulses: number = 0;
+  totalWords: number = 0;
   
   columnInfo = {
     username: {
@@ -614,6 +618,7 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
     this.totalUpload = 0;
     this.totalUptime = 0;
     this.totalPulses = 0;
+    this.totalWords = 0;
 
     this.filteredData.forEach(row => {
       this.totalKeys += +row.keys || 0;
@@ -626,6 +631,7 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
       
       this.totalUptime += +row.uptime || 0;
       this.totalPulses += +row.pulses || 0;
+      this.totalWords += +row.words || 0;
     });
   }
 

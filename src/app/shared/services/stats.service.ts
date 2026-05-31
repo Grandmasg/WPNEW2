@@ -8,7 +8,7 @@ import { DebugService } from './debug.service';
 export interface StatRecord {
   id: number;
   name: string;
-  username: string; // Make sure this is explicitly defined
+  username: string;
   keys: number;
   clicks: number;
   scrolls: number;
@@ -17,7 +17,9 @@ export interface StatRecord {
   upload: string;
   uptime: string;
   pulses: number;
-  [key: string]: any; // Allow additional fields
+  words: number;
+  avatar: string;
+  [key: string]: any;
 }
 
 export interface StatsResponse {
@@ -442,6 +444,8 @@ export class StatsService {
       upload: item.UploadMB || item.StatsUploadMB || '0',
       uptime: item.UptimeSeconds || item.StatsUptimeSeconds || '0',
       pulses: pulsesValue,
+      words: this.parseNumberField(item.words || item.Words || 0),
+      avatar: item.avatar || item.Avatar || '',
       
       // Make sure we capture all possible rank fields for both Today and Yesterday
       RankKeysToday: item.RankKeysToday,
@@ -512,7 +516,9 @@ export class StatsService {
       download: '0',
       upload: '0',
       uptime: '0',
-      pulses: 0
+      pulses: 0,
+      words: 0,
+      avatar: ''
     };
   }
 

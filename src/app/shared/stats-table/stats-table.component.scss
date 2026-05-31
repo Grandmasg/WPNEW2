@@ -736,6 +736,15 @@ th.keys-column, td.keys-column,
   }
 }
 
+// User avatar
+.user-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
 // Inactive (deleted) users
 tr.inactive-user {
   opacity: 0.5;
