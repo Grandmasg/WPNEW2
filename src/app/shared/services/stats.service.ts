@@ -433,6 +433,7 @@ export class StatsService {
     
     return {
       id: item.id || item.UserID || index + 1,
+      UserID: item.UserID || item.id || null,
       name: item.name || item.Name || item.UsernameFull || '',
       username: item.username || item.Username || item.UserName || '', 
       // Handle different field names
