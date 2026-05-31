@@ -389,6 +389,18 @@ export class ApiService {
   }
 
   /**
+   * Get user history (daily stats last N days) from DB
+   */
+  getUserHistory(userId: number, days: number = 30): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/user-history.php?user_id=${userId}&days=${days}`).pipe(
+      catchError(error => {
+        this.debugService.error('ApiService', 'Error fetching user history:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
    * Get enriched user detail from WhatPulse API (cached 1h on backend)
    */
   getUserDetail(userId: number): Observable<any> {

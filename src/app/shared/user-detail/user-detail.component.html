@@ -13,11 +13,20 @@
           </span>
         }
       </h5>
+      @if (user?.subteam) {
+        <small class="text-muted d-block"><i class="fa-solid fa-users me-1"></i>{{ user.subteam }}</small>
+      }
       @if (user?.date_joined) {
         <small class="text-muted d-block">Lid sinds: {{ user.date_joined | date:'dd-MM-yyyy' }}</small>
       }
       @if (user?.first_pulse_date) {
         <small class="text-muted d-block">Eerste pulse: {{ user.first_pulse_date | date:'dd-MM-yyyy' }}</small>
+      }
+      @if (user?.last_pulse) {
+        <small class="text-muted d-block">Laatste pulse: {{ user.last_pulse | date:'dd-MM-yyyy HH:mm' }}</small>
+      }
+      @if (user?.pulses) {
+        <small class="text-muted d-block"><i class="fa-solid fa-bolt me-1"></i>{{ formatNumber(user.pulses) }} pulses</small>
       }
       @if (user?.computer_count) {
         <small class="text-muted d-block"><i class="fa-solid fa-computer me-1"></i>{{ user.computer_count }} computer(s)</small>
@@ -72,7 +81,6 @@
         <span class="stat-label">Scrollen</span>
         <span class="stat-value">{{ formatNumber(user.totals?.scrolls || 0) }}</span>
       </div>
-
       <div class="stat-item">
         <span class="stat-label">Download</span>
         <span class="stat-value">{{ formatBytes(user.totals?.download_mb || 0) }}</span>
@@ -83,7 +91,7 @@
       </div>
       <div class="stat-item">
         <span class="stat-label">Actieve tijd</span>
-        <span class="stat-value">{{ formatUptime(user.totals?.uptime_seconds || 0) }}</span>
+        <span class="stat-value">{{ user.uptime_long || formatNumber(user.totals?.uptime_seconds || 0) }}</span>
       </div>
       <div class="stat-item">
         <span class="stat-label">Afstand</span>
@@ -91,23 +99,25 @@
       </div>
     </div>
 
-    <!-- Computers -->
-    @if (user.computers?.length) {
-      <h6 class="section-title">
-        <i class="fa-solid fa-computer me-1"></i> Computers ({{ user.computers.length }})
-      </h6>
-      @for (pc of user.computers; track pc.name) {
-        <div class="computer-item mb-2">
-          <i class="{{ osIcon(pc.os) }} me-2"></i>
-          <span>{{ pc.name }}</span>
-          @if (pc.last_pulse_date) {
-            <small class="text-muted ms-2">— {{ pc.last_pulse_date | date:'dd-MM-yyyy' }}</small>
-          }
-          @if (pc.is_archived) {
-            <span class="badge bg-secondary ms-1">Archief</span>
-          }
-        </div>
-      }
+    <!-- Grafiek -->
+    @if (chartOptions) {
+      <h6 class="section-title"><i class="fa-solid fa-chart-area me-1"></i> Laatste 30 dagen</h6>
+      <div class="btn-group btn-group-sm mb-2">
+        <button class="btn" [class.btn-primary]="selectedMetric === 'keys'"
+                [class.btn-outline-secondary]="selectedMetric !== 'keys'"
+                (click)="selectMetric('keys')">Toetsen</button>
+        <button class="btn" [class.btn-primary]="selectedMetric === 'clicks'"
+                [class.btn-outline-secondary]="selectedMetric !== 'clicks'"
+                (click)="selectMetric('clicks')">Klikken</button>
+        <button class="btn" [class.btn-primary]="selectedMetric === 'scrolls'"
+                [class.btn-outline-secondary]="selectedMetric !== 'scrolls'"
+                (click)="selectMetric('scrolls')">Scrollen</button>
+      </div>
+      <highcharts-chart
+        [constructorType]="'chart'"
+        [options]="chartOptions"
+        style="width:100%;display:block;">
+      </highcharts-chart>
     }
   }
 </div>
