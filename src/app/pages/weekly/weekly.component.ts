@@ -602,7 +602,7 @@ export class WeeklyComponent implements OnInit, AfterViewInit, OnDestroy {
       previous: this.xmlDateRange?.previous,
       changes: {
         added: this.xmlChanges.filter(u => u.category === 'added'),
-        changed: [], // tijdelijk verborgen (UTF-8 fix in behandeling)
+        changed: this.xmlChanges.filter(u => u.category === 'changed'),
         left: this.xmlChanges.filter(u => u.category === 'left')
       }
     };

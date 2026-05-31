@@ -465,7 +465,7 @@ export class YearlyComponent implements OnInit, OnDestroy, AfterViewInit {
     return {
       changes: {
         added: this.xmlChanges.filter(u => u.category === 'added'),
-        changed: [], // tijdelijk verborgen (UTF-8 fix in behandeling)
+        changed: this.xmlChanges.filter(u => u.category === 'changed'),
         left: this.xmlChanges.filter(u => u.category === 'left')
       }
     };
