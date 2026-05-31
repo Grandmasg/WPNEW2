@@ -1,0 +1,28 @@
+<div *ngIf="!hasError" class="team-rank-banner mb-2"
+     [ngClass]="{'banner-dark': currentTheme === 'dark', 'banner-light': currentTheme === 'light'}">
+
+  <!-- Loading -->
+  <div *ngIf="isLoading" class="d-flex align-items-center gap-2 py-1">
+    <i class="fa-solid fa-spinner fa-spin"></i>
+    <small class="text-muted">{{ 'common.loading' | translate }}</small>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading && teamRank" class="d-flex flex-wrap align-items-center gap-3">
+    <div class="team-name">
+      <i class="fa-solid fa-trophy me-1"></i>
+      <strong>{{ teamRank.name }}</strong>
+      <small class="ms-2 text-muted">({{ teamRank.members }} {{ 'stats.users' | translate }})</small>
+    </div>
+
+    <div class="rank-items d-flex flex-wrap gap-2">
+      <div *ngFor="let item of rankItems"
+           class="rank-pill"
+           [ngClass]="rankClass(getRank(item.key))"
+           [title]="item.label | translate">
+        <i class="fa-solid {{ item.icon }}"></i>
+        <span>#{{ getRank(item.key) ?? '—' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

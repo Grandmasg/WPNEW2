@@ -6,6 +6,7 @@ import { StatsTableComponent } from '../../shared/stats-table/stats-table.compon
 import { StatsService, StatRecord } from '../../shared/services/stats.service';
 import { XmlChangesComponent } from '../../shared/xml-changes/xml-changes.component';
 import { HighchartsGraphComponent } from '../../shared/highcharts-graph/highcharts-graph.component';
+import { TeamRankBannerComponent } from '../../shared/team-rank-banner/team-rank-banner.component';
 import { DebugService } from '../../shared/services/debug.service';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '../../shared/services/translate.service'; // Added TranslateService
@@ -19,8 +20,8 @@ import { ThemeService, ThemeMode } from '../../shared/services/theme.service';
     DateInputGroupComponent, 
     StatsTableComponent,
     XmlChangesComponent,
-    HighchartsGraphComponent
-    // TranslatePipe will be removed from here
+    HighchartsGraphComponent,
+    TeamRankBannerComponent
   ],
   templateUrl: './overall.component.html',
   styleUrls: ['./overall.component.scss']
