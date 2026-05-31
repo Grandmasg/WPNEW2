@@ -621,14 +621,16 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
     this.totalWords = 0;
 
     this.filteredData.forEach(row => {
+      if (row['is_active'] === 0 || row['is_active'] === '0') return;
+
       this.totalKeys += +row.keys || 0;
       this.totalClicks += +row.clicks || 0;
       this.totalScrolls += +row.scrolls || 0;
       this.totalDistance += +row.distance || 0;
-      
+
       this.totalDownload += (+row.download || 0) * 1024 * 1024;
       this.totalUpload += (+row.upload || 0) * 1024 * 1024;
-      
+
       this.totalUptime += +row.uptime || 0;
       this.totalPulses += +row.pulses || 0;
       this.totalWords += +row.words || 0;

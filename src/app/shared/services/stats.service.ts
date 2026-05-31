@@ -483,10 +483,13 @@ export class StatsService {
       UploadMB: item.UploadMB,
       UptimeSeconds: item.UptimeSeconds,
       
+      // Actief/inactief account
+      is_active: item.is_active !== undefined ? Number(item.is_active) : 1,
+
       // Preserve XML flag fields
       today: item.today,
       yesterday: item.yesterday,
-      
+
       // Additional metadata
       Team: item.Team,
       LastPulse: item.LastPulse,
