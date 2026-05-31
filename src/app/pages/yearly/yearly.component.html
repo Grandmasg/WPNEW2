@@ -17,16 +17,16 @@
       <div class="me-3 mb-1 mb-md-0">
         <i class="fa-regular fa-calendar"></i> {{ 'common.showing' | translate }} <strong>{{ 'nav.yearly' | translate }}</strong> {{ 'common.dataFor' | translate }}: 
         <strong>
-          <ng-container *ngIf="xmlDateRange?.current && xmlDateRange?.previous">
+          <ng-container *ngIf="xmlDateRange.current && xmlDateRange.previous">
             {{ formatDateString(xmlDateRange.previous || null) }} {{ 'common.to' | translate }} {{ formatDateString(xmlDateRange.current || null) }}
           </ng-container>
-          <ng-container *ngIf="xmlDateRange?.current && !xmlDateRange?.previous">
+          <ng-container *ngIf="xmlDateRange.current && !xmlDateRange.previous">
             {{ formatDateString(xmlDateRange.current || null) }}
           </ng-container>
-          <ng-container *ngIf="!(xmlDateRange?.current) && startDate && endDate">
+          <ng-container *ngIf="!xmlDateRange.current && startDate && endDate">
             {{ formatDateString(startDate) }} {{ 'common.to' | translate }} {{ formatDateString(endDate) }}
           </ng-container>
-          <ng-container *ngIf="!(xmlDateRange?.current) && !(startDate && endDate)">
+          <ng-container *ngIf="!xmlDateRange.current && !(startDate && endDate)">
             {{ getFormattedDate() }}
           </ng-container>
         </strong>
