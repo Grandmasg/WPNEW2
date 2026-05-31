@@ -1,17 +1,27 @@
 <div class="offcanvas-header" [ngClass]="{'bg-dark text-light': currentTheme === 'dark'}">
   <div class="d-flex align-items-center gap-2">
-    <img *ngIf="user?.avatar" [src]="user.avatar" class="avatar-lg rounded-circle"
-         [alt]="username" (error)="$any($event.target).style.display='none'">
+    @if (user?.avatar) {
+      <img [src]="user.avatar" class="avatar-lg rounded-circle"
+           [alt]="username" (error)="$any($event.target).style.display='none'">
+    }
     <div>
       <h5 class="offcanvas-title mb-0">
         {{ user?.username || username }}
-        <span *ngIf="user?.is_premium" class="badge bg-warning text-dark ms-1" title="Premium">
-          <i class="fa-solid fa-star"></i>
-        </span>
+        @if (user?.is_premium) {
+          <span class="badge bg-warning text-dark ms-1" title="Premium">
+            <i class="fa-solid fa-star"></i>
+          </span>
+        }
       </h5>
-      <small class="text-muted" *ngIf="user?.date_joined">
-        {{ 'common.memberSince' | translate }}: {{ user.date_joined | date:'dd-MM-yyyy' }}
-      </small>
+      @if (user?.date_joined) {
+        <small class="text-muted d-block">Lid sinds: {{ user.date_joined | date:'dd-MM-yyyy' }}</small>
+      }
+      @if (user?.first_pulse_date) {
+        <small class="text-muted d-block">Eerste pulse: {{ user.first_pulse_date | date:'dd-MM-yyyy' }}</small>
+      }
+      @if (user?.computer_count) {
+        <small class="text-muted d-block"><i class="fa-solid fa-computer me-1"></i>{{ user.computer_count }} computer(s)</small>
+      }
     </div>
   </div>
   <button type="button" class="btn-close" [class.btn-close-white]="currentTheme === 'dark'"
@@ -20,31 +30,31 @@
 
 <div class="offcanvas-body">
 
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="text-center py-5">
-    <div class="spinner-border text-primary" role="status"></div>
-    <p class="mt-2 text-muted">{{ 'common.loading' | translate }}</p>
-  </div>
+  @if (isLoading) {
+    <div class="text-center py-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p class="mt-2 text-muted">{{ 'common.loading' | translate }}</p>
+    </div>
+  }
 
-  <!-- Error -->
-  <div *ngIf="hasError" class="alert alert-danger">
-    <i class="fa-solid fa-triangle-exclamation me-2"></i>
-    Kon gebruikersdata niet laden.
-  </div>
+  @if (hasError) {
+    <div class="alert alert-danger">
+      <i class="fa-solid fa-triangle-exclamation me-2"></i>
+      Kon gebruikersdata niet laden.
+    </div>
+  }
 
-  <!-- Content -->
-  <ng-container *ngIf="!isLoading && !hasError && user">
+  @if (!isLoading && !hasError && user) {
 
     <!-- Global ranks -->
     <h6 class="section-title"><i class="fa-solid fa-globe me-1"></i> Wereldrang</h6>
     <div class="d-flex flex-wrap gap-2 mb-3">
-      <div *ngFor="let item of rankItems"
-           class="rank-pill"
-           [ngClass]="rankClass(getRank(item.key))"
-           [title]="item.label | translate">
-        <i class="fa-solid {{ item.icon }}"></i>
-        <span>#{{ getRank(item.key) ?? '—' }}</span>
-      </div>
+      @for (item of rankItems; track item.key) {
+        <div class="rank-pill" [ngClass]="rankClass(getRank(item.key))" [title]="item.label | translate">
+          <i class="fa-solid {{ item.icon }}"></i>
+          <span>#{{ getRank(item.key) ?? '—' }}</span>
+        </div>
+      }
     </div>
 
     <!-- Totals -->
@@ -85,17 +95,22 @@
     </div>
 
     <!-- Computers -->
-    <h6 class="section-title" *ngIf="user.computers?.length">
-      <i class="fa-solid fa-computer me-1"></i> Computers ({{ user.computers.length }})
-    </h6>
-    <div *ngFor="let pc of user.computers" class="computer-item mb-2">
-      <i class="{{ osIcon(pc.os) }} me-2"></i>
-      <span>{{ pc.name }}</span>
-      <small class="text-muted ms-2" *ngIf="pc.last_pulse_date">
-        — {{ pc.last_pulse_date | date:'dd-MM-yyyy' }}
-      </small>
-      <span *ngIf="pc.is_archived" class="badge bg-secondary ms-1">Archief</span>
-    </div>
-
-  </ng-container>
+    @if (user.computers?.length) {
+      <h6 class="section-title">
+        <i class="fa-solid fa-computer me-1"></i> Computers ({{ user.computers.length }})
+      </h6>
+      @for (pc of user.computers; track pc.name) {
+        <div class="computer-item mb-2">
+          <i class="{{ osIcon(pc.os) }} me-2"></i>
+          <span>{{ pc.name }}</span>
+          @if (pc.last_pulse_date) {
+            <small class="text-muted ms-2">— {{ pc.last_pulse_date | date:'dd-MM-yyyy' }}</small>
+          }
+          @if (pc.is_archived) {
+            <span class="badge bg-secondary ms-1">Archief</span>
+          }
+        </div>
+      }
+    }
+  }
 </div>
