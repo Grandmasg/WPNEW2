@@ -107,7 +107,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of paginatedData; let i = index">
+        <tr *ngFor="let row of paginatedData; let i = index"
+            [class.inactive-user]="row['is_active'] === 0 || row['is_active'] === '0'">
           <td class="rank-column" [ngbPopover]="rankPopover" 
               [popoverContext]="{row: row, rank: (page - 1) * pageSize + i + 1}"
               popoverTitle="Daily rank:" 
@@ -187,6 +188,11 @@
               class="cursor-help">
               <span class="username-link" (click)="onUsernameClick(row)">
                 <span [innerHTML]="row['username'] | highlight: searchTerm"></span>
+              </span>
+              <span *ngIf="row['is_active'] === 0 || row['is_active'] === '0'"
+                    class="badge bg-secondary ms-1"
+                    title="Account verwijderd">
+                <i class="fa-solid fa-user-slash"></i> Verwijderd
               </span>
               <div class="pull-right small" *ngIf="row['team'] || row['Team']">{{ row['team'] || row['Team'] }}</div>
           </td>

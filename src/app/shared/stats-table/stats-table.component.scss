@@ -736,6 +736,18 @@ th.keys-column, td.keys-column,
   }
 }
 
+// Inactive (deleted) users
+tr.inactive-user {
+  opacity: 0.5;
+  color: var(--bs-secondary-color);
+
+  .username-link {
+    color: var(--bs-secondary-color) !important;
+    text-decoration: line-through;
+    pointer-events: none;
+  }
+}
+
 // Default username styling
 .username-link {
   cursor: pointer;

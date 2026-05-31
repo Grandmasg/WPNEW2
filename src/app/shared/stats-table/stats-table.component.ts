@@ -498,8 +498,12 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
 
   applySorting(): void {
     if (!this.sortColumn) return;
-    
+
     this.filteredData = [...this.filteredData].sort((a, b) => {
+      const activeA = (a['is_active'] === 0 || a['is_active'] === '0') ? 0 : 1;
+      const activeB = (b['is_active'] === 0 || b['is_active'] === '0') ? 0 : 1;
+      if (activeA !== activeB) return activeA > activeB ? -1 : 1;
+
       let valueA, valueB;
       
       if (this.viewType === 'xml' || this.viewType === 'daily') {
