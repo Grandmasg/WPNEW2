@@ -8,6 +8,8 @@ export interface Team {
   teamname: string;
   team: string;
   aantal: number;
+  date_formed?: string | null;
+  subteam_name?: string | null;
 }
 
 @Injectable({

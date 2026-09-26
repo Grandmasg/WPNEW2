@@ -1,11 +1,11 @@
 import { Component, Input, OnChanges, SimpleChanges, OnInit, AfterViewInit, ViewChild, Output, EventEmitter, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { NgbPopoverModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPopoverModule, NgbDropdownModule, NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { UserDetailComponent } from '../user-detail/user-detail.component';
 import { LocalizationService } from '../services/localization.service';
 import { HighlightPipe } from '../pipes/highlight.pipe';
-import { StatsService } from '../services/stats.service';
+import { StatsService, StatRecord } from '../services/stats.service';
 import { MatPaginator } from '@angular/material/paginator';
 import { DebugService } from '../services/debug.service';
 import { FilterService } from '../services/filter.service';
@@ -14,23 +14,6 @@ import { TranslateService } from '../services/translate.service';
 import { Subscription } from 'rxjs';
 import { PaginationComponent } from '../components/pagination/pagination.component';
 
-export interface StatRecord {
-  id: number;
-  name: string;
-  username: string;
-  keys: number;
-  clicks: number;
-  scrolls: number;
-  distance: number;
-  download: string;
-  upload: string;
-  uptime: string;
-  pulses: number;
-  words: number;
-  avatar: string;
-  [key: string]: any;
-}
-
 @Component({
   selector: 'app-stats-table',
   standalone: true,
@@ -38,6 +21,7 @@ export interface StatRecord {
     CommonModule,
     FormsModule,
     NgbPopoverModule,
+    NgbDropdownModule,
     HighlightPipe,
     TranslatePipe,
     PaginationComponent
@@ -104,6 +88,44 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
   private translationSubscription: Subscription | null = null;
 
   private readonly LOCAL_STORAGE_PAGE_SIZE_KEY = 'statsItemsPerPage';
+  private readonly LOCAL_STORAGE_COLUMNS_KEY   = 'statsTableColumns';
+
+  readonly columnDefs = [
+    { key: 'keys',     label: 'Toetsen',      default: true  },
+    { key: 'clicks',   label: 'Klikken',       default: true  },
+    { key: 'scrolls',  label: 'Scrollen',      default: true  },
+    { key: 'distance', label: 'Afstand',       default: true  },
+    { key: 'download', label: 'Download',      default: true  },
+    { key: 'upload',   label: 'Upload',        default: true  },
+    { key: 'uptime',   label: 'Actieve tijd',  default: true  },
+    { key: 'words',    label: 'Woorden',       default: false },
+    { key: 'pulses',   label: 'Pulses',        default: true  },
+  ];
+
+  visibleColumns: Record<string, boolean> = {};
+
+  col(key: string): boolean {
+    return this.visibleColumns[key] ?? true;
+  }
+
+  getWordsRank(row: any): number {
+    const sorted = [...this.filteredData].sort((a, b) => (b.words || 0) - (a.words || 0));
+    return sorted.findIndex(r => r === row) + 1;
+  }
+
+  toggleColumn(key: string): void {
+    this.visibleColumns[key] = !this.visibleColumns[key];
+    localStorage.setItem(this.LOCAL_STORAGE_COLUMNS_KEY, JSON.stringify(this.visibleColumns));
+    window.dispatchEvent(new CustomEvent('statsColumnsChanged', { detail: { ...this.visibleColumns } }));
+  }
+
+  resetColumns(): void {
+    const defaults: Record<string, boolean> = {};
+    this.columnDefs.forEach(c => defaults[c.key] = c.default);
+    this.visibleColumns = defaults;
+    localStorage.removeItem(this.LOCAL_STORAGE_COLUMNS_KEY);
+    window.dispatchEvent(new CustomEvent('statsColumnsChanged', { detail: { ...this.visibleColumns } }));
+  }
   private readonly LOCAL_STORAGE_SORT_COLUMN_KEY = 'statsSortColumn';
   private readonly LOCAL_STORAGE_SORT_DIRECTION_KEY = 'statsSortDirection';
   private readonly LOCAL_STORAGE_SEARCH_TERM_KEY = 'statsSearchTerm';
@@ -120,6 +142,16 @@ export class StatsTableComponent implements OnChanges, OnInit, AfterViewInit, On
   ) {}
 
   ngOnInit(): void {
+    // Restore column visibility from localStorage
+    const defaults: Record<string, boolean> = {};
+    this.columnDefs.forEach(c => defaults[c.key] = c.default);
+    try {
+      const saved = localStorage.getItem(this.LOCAL_STORAGE_COLUMNS_KEY);
+      this.visibleColumns = saved ? { ...defaults, ...JSON.parse(saved) } : defaults;
+    } catch {
+      this.visibleColumns = defaults;
+    }
+
     // Restore pageSize from localStorage if available
     const savedPageSize = localStorage.getItem(this.LOCAL_STORAGE_PAGE_SIZE_KEY);
     if (savedPageSize && !isNaN(+savedPageSize)) {

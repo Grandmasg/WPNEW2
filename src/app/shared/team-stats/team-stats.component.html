@@ -1,0 +1,103 @@
+@if (isLoading) {
+  <div class="team-stats-card mb-3">
+    <div class="text-center py-2">
+      <div class="spinner-border spinner-border-sm text-primary"></div>
+    </div>
+  </div>
+}
+
+@if (!isLoading && data && !collapsed) {
+  <div class="team-stats-card mb-3">
+
+    @if (team !== '-') {
+      <div class="team-stats-header d-flex align-items-center gap-3 flex-wrap">
+        <span class="team-stats-name">
+          <i class="fa-solid fa-users me-1"></i>{{ teamLabel }}
+        </span>
+        <small class="text-muted">
+          <strong>{{ data.stats.member_count }}</strong> leden
+          @if (data.stats.premium_count) {
+            · <i class="fa-solid fa-star text-warning"></i> {{ data.stats.premium_count }} premium
+          }
+          @if (dateFormed) {
+            · <i class="fa-solid fa-calendar-days me-1"></i>Opgericht: {{ dateFormed | date:'dd-MM-yyyy' }}
+          }
+        </small>
+        <div class="d-flex gap-1">
+          @for (c of countries; track c.iso) {
+            <span class="fi fi-{{ c.iso }}" [title]="c.name"></span>
+          }
+        </div>
+      </div>
+    } @else if (dateFormed) {
+      <div class="team-stats-header">
+        <small class="text-muted">
+          <i class="fa-solid fa-calendar-days me-1"></i>Opgericht: {{ dateFormed | date:'dd-MM-yyyy' }}
+          · {{ data.stats.premium_count }} premium leden
+        </small>
+      </div>
+    }
+
+    <div class="team-stats-body">
+
+        <!-- Totalen grid -->
+        <div class="ts-section-label">All-time totalen</div>
+        <div class="ts-grid mb-3">
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-keyboard me-1"></i>Toetsen</span>
+            <span class="ts-value">{{ formatNumber(data.stats.total_keys) }}</span>
+            <span class="ts-avg">Ø {{ formatNumber(Math.round(data.stats.total_keys / data.stats.member_count)) }}</span>
+          </div>
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-computer-mouse me-1"></i>Klikken</span>
+            <span class="ts-value">{{ formatNumber(data.stats.total_clicks) }}</span>
+            <span class="ts-avg">Ø {{ formatNumber(Math.round(data.stats.total_clicks / data.stats.member_count)) }}</span>
+          </div>
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-scroll me-1"></i>Scrollen</span>
+            <span class="ts-value">{{ formatNumber(data.stats.total_scrolls) }}</span>
+            <span class="ts-avg">Ø {{ formatNumber(Math.round(data.stats.total_scrolls / data.stats.member_count)) }}</span>
+          </div>
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-route me-1"></i>Afstand</span>
+            <span class="ts-value">{{ formatDistance(data.stats.total_distance_miles) }}</span>
+          </div>
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-download me-1"></i>Download</span>
+            <span class="ts-value">{{ formatBytes(data.stats.total_download_mb) }}</span>
+          </div>
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-upload me-1"></i>Upload</span>
+            <span class="ts-value">{{ formatBytes(data.stats.total_upload_mb) }}</span>
+          </div>
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-clock me-1"></i>Actieve tijd</span>
+            <span class="ts-value">{{ formatUptime(data.stats.total_uptime_seconds) }}</span>
+          </div>
+          <div class="ts-item">
+            <span class="ts-label"><i class="fa-solid fa-bolt me-1"></i>Pulses</span>
+            <span class="ts-value">{{ formatNumber(data.stats.total_pulses) }}</span>
+            <span class="ts-avg">Ø {{ formatNumber(Math.round(data.stats.total_pulses / data.stats.member_count)) }}</span>
+          </div>
+        </div>
+
+        <!-- Top performers -->
+        @if (data.top_performers && (data.top_performers.keys || data.top_performers.clicks)) {
+          <div class="ts-section-label">Top performers</div>
+          <div class="d-flex flex-wrap gap-2">
+            @for (entry of TOP_METRICS; track entry.key) {
+              @if (data.top_performers[entry.key]) {
+                <div class="ts-top-pill">
+                  <i class="fa-solid me-1 text-primary" [ngClass]="entry.icon"></i>
+                  <strong>{{ entry.label }}:</strong>
+                  {{ data.top_performers[entry.key].username }}
+                  <small class="text-muted">({{ formatNumber(data.top_performers[entry.key].value) }})</small>
+                </div>
+              }
+            }
+          </div>
+        }
+
+      </div>
+  </div>
+}

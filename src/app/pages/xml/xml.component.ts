@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms'; // Add FormsModule for ngModel
@@ -27,6 +27,7 @@ type XmlViewType = 'daily' | 'weekly' | 'monthly' | 'yearly';
   ],
   templateUrl: './xml.component.html',
   styleUrls: ['./xml.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
     trigger('CopyVisible', [
       state('hidden', style({
@@ -118,12 +119,13 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
   teamnrOptions: string[] = ['6', '8', '10', '12', '14', '16', '18'];
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private router: Router,
     private statsService: StatsService,
     private themeService: ThemeService,
     private translateService: TranslateService,
-    private debugService: DebugService
+    private debugService: DebugService,
+    private cdr: ChangeDetectorRef
   ) {}
   
   ngOnInit(): void {
@@ -150,6 +152,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
 
         // Load XML data
         this.loadXmlData();
+        this.cdr.markForCheck();
       } else {
         this.debugService.log('XML', 'Parameters unchanged, skipping data reload.');
       }
@@ -165,6 +168,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
     const themeSub = this.themeService.currentTheme$.subscribe(theme => {
       this.currentTheme = theme === 'system' ? 'light' : theme;
       this.applyTheme();
+      this.cdr.markForCheck();
     });
     this.subscriptions.push(themeSub);
 
@@ -291,7 +295,8 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
   loadXmlData(): void {
     this.isLoading = true;
     this.hasError = false;
-    
+    this.cdr.markForCheck();
+
     this.debugService.log('XML', `Loading XML data - type: ${this.xmlViewType}, offset: ${this.offset}, team: ${this.teamname}, search: ${this.searchText}, filters: topnr=${this.topnr}, othernr=${this.othernr}, teamnr=${this.teamnr}`);
     
     // Load based on current view type
@@ -341,6 +346,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           
           this.isLoadingDaily = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xmlViewLabel = 'Daily';
         },
         error: (error) => {
@@ -348,6 +354,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           this.hasError = true;
           this.isLoadingDaily = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xml = '';
         }
       });
@@ -382,6 +389,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           
           this.isLoadingWeekly = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xmlViewLabel = 'Weekly';
         },
         error: (error) => {
@@ -389,6 +397,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           this.hasError = true;
           this.isLoadingWeekly = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xml = '';
         }
       });
@@ -423,6 +432,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           
           this.isLoadingMonthly = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xmlViewLabel = 'Monthly';
         },
         error: (error) => {
@@ -430,6 +440,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           this.hasError = true;
           this.isLoadingMonthly = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xml = '';
         }
       });
@@ -464,6 +475,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           
           this.isLoadingYearly = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xmlViewLabel = 'Yearly';
         },
         error: (error) => {
@@ -471,6 +483,7 @@ export class XmlComponent implements OnInit, OnDestroy, AfterViewInit {
           this.hasError = true;
           this.isLoadingYearly = false;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.xml = '';
         }
       });

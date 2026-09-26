@@ -1,9 +1,10 @@
 <div class="container" #weeklyContainer>
   <div style="padding-bottom: 1rem;"></div>
 
-  <app-team-rank-banner [currentTheme]="currentTheme"></app-team-rank-banner>
+  <app-team-rank-banner [currentTheme]="currentTheme" [team]="teamname" [offset]="offset"></app-team-rank-banner>
 
-  <app-date-input-group 
+
+  <app-date-input-group
     [offset]="offset"
     [selectedDate]="selectedDate"
     (offsetChange)="onOffsetChange($event)"
@@ -17,18 +18,16 @@
         <i class="fa-regular fa-calendar"></i> {{ 'common.showing' | translate }} <strong>{{ 'nav.weekly' | translate }}</strong> {{ 'common.dataFor' | translate }}: 
         <strong>
           <!-- Show XML date range first if available, then API date range, then calculated range -->
-          <span *ngIf="xmlDateRange?.current && xmlDateRange?.previous">
-            {{ formatDateString(xmlDateRange?.previous ?? null) }} {{ 'common.to' | translate }} {{ formatDateString(xmlDateRange?.current ?? null) }}
-          </span>
-          <span *ngIf="!(xmlDateRange?.current && xmlDateRange?.previous) && start && end">
-            {{ 'common.week' | translate }} {{ getWeekNumber() }}: {{ formatDateString(start) }} - {{ formatDateString(end) }}
-          </span>
-          <span *ngIf="!(xmlDateRange?.current && xmlDateRange?.previous) && !(start && end)">
-            <ng-container *ngIf="isSundayOffset()">
-              {{ 'common.week' | translate }} {{ getWeekNumber() }}: 
-            </ng-container>
-            {{ getFormattedDateRange() }}
-          </span>
+          @if (xmlDateRange?.current && xmlDateRange?.previous) {
+            <span>{{ formatDateString(xmlDateRange?.previous ?? null) }} {{ 'common.to' | translate }} {{ formatDateString(xmlDateRange?.current ?? null) }}</span>
+          } @else if (start && end) {
+            <span>{{ 'common.week' | translate }} {{ getWeekNumber() }}: {{ formatDateString(start) }} - {{ formatDateString(end) }}</span>
+          } @else {
+            <span>
+              @if (isSundayOffset()) { {{ 'common.week' | translate }} {{ getWeekNumber() }}: }
+              {{ getFormattedDateRange() }}
+            </span>
+          }
         </strong>
       </div>
       <div class="me-3 mb-1 mb-md-0">
@@ -40,8 +39,8 @@
     </div>
     
     <!-- XML Changes Tables - Only show when there's data -->
-    <app-xml-changes 
-      *ngIf="xmlChanges && xmlChanges.length > 0"
+    @if (xmlChanges && xmlChanges.length > 0) {
+    <app-xml-changes
       [isLoading]="xmlLoading" 
       [hasError]="false" 
       [changes]="getFormattedChanges()" 
@@ -54,6 +53,7 @@
       [skipAutoLoad]="true" 
       [parentLoaded]="!isLoading">
     </app-xml-changes>
+    }
 
     <!-- Stats table with search handled via router navigation -->
     <app-stats-table 

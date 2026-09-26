@@ -8,7 +8,8 @@ import { HighchartsChartComponent } from 'highcharts-angular';
 import { PaginationComponent } from '../components/pagination/pagination.component';
 import { ApiService } from '../services/api.service'; // Use existing ApiService instead of GraphService
 import { TranslateService } from '../services/translate.service';
-import { Subscription } from 'rxjs';
+import { Subscription, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { LocalizationService } from '../services/localization.service';
 import { DebugService } from '../services/debug.service';
 
@@ -41,6 +42,7 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
   private readonly LOCAL_STORAGE_PAGE_SIZE_KEY = 'statsItemsPerPage';
   private translationSubscription?: Subscription;
   private unitSubscription?: Subscription;
+  private destroy$ = new Subject<void>();
   
   // Track previous values to detect real changes
   private previousPeriod?: string;
@@ -65,16 +67,42 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
   chartMetric: string = 'StatsKeys';
   displayMetric: string = 'Keys';
   filteredTotalItems: number = 0; // Track filtered total for pagination
-  availableMetrics = [
-    { value: 'StatsKeys', label: 'chart.keys' },
-    { value: 'StatsClicks', label: 'chart.clicks' },
-    { value: 'StatsScrolls', label: 'chart.scrolls' },
-    { value: 'StatsDistance', label: 'chart.distance' },
-    { value: 'StatsDownloadMB', label: 'chart.download' },
-    { value: 'StatsUploadMB', label: 'chart.upload' },
-    { value: 'StatsUptimeSeconds', label: 'chart.uptime' },
-    { value: 'StatsPulses', label: 'chart.pulses' }
+  private readonly COLUMNS_KEY = 'statsTableColumns';
+  private readonly allMetrics = [
+    { value: 'StatsKeys',         label: 'chart.keys',     colKey: 'keys'     },
+    { value: 'StatsClicks',       label: 'chart.clicks',   colKey: 'clicks'   },
+    { value: 'StatsScrolls',      label: 'chart.scrolls',  colKey: 'scrolls'  },
+    { value: 'StatsDistance',     label: 'chart.distance', colKey: 'distance' },
+    { value: 'StatsDownloadMB',   label: 'chart.download', colKey: 'download' },
+    { value: 'StatsUploadMB',     label: 'chart.upload',   colKey: 'upload'   },
+    { value: 'StatsUptimeSeconds',label: 'chart.uptime',   colKey: 'uptime'   },
+    { value: 'StatsWords',        label: 'chart.words',    colKey: 'words'    },
+    { value: 'StatsPulses',       label: 'chart.pulses',   colKey: 'pulses'   },
   ];
+  availableMetrics = [...this.allMetrics];
+
+  private columnDefaults: Record<string, boolean> = {
+    keys: true, clicks: true, scrolls: true, distance: true,
+    download: true, upload: true, uptime: true, words: false, pulses: true
+  };
+
+  private updateAvailableMetrics(): void {
+    let saved: Record<string, boolean> = {};
+    try {
+      const raw = localStorage.getItem(this.COLUMNS_KEY);
+      if (raw) saved = JSON.parse(raw);
+    } catch {}
+    const vis = { ...this.columnDefaults, ...saved };
+    this.availableMetrics = this.allMetrics.filter(m => vis[m.colKey] !== false);
+    if (!this.availableMetrics.find(m => m.value === this.chartMetric)) {
+      this.chartMetric = this.availableMetrics[0]?.value ?? 'StatsKeys';
+    }
+  }
+
+  private columnsChangedHandler = () => {
+    this.updateAvailableMetrics();
+    this.cdr.markForCheck();
+  };
   chartHeight: number = 400;
   chartHeightOptions: number[] = [400, 600, 800];
   fullData: any[] = [];
@@ -94,6 +122,8 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
   ) {}
 
   ngOnInit(): void {
+    this.updateAvailableMetrics();
+    window.addEventListener('statsColumnsChanged', this.columnsChangedHandler);
     this.setDefaultMetric();
     this.applyThemeToHighcharts();
     this.initEmptyChart();
@@ -208,7 +238,7 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
     this.isLoading = true;
     this.lastLoadedParams = paramsKey;
     
-    this.apiService.getGraphData(this.period, this.offset, this.team, this.searchTerm).subscribe({
+    this.apiService.getGraphData(this.period, this.offset, this.team, this.searchTerm).pipe(takeUntil(this.destroy$)).subscribe({
       next: (data: any) => {
         // API may return an array or an object with a .data property
         if (Array.isArray(data)) {
@@ -219,13 +249,13 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
           this.fullData = [];
         }
         this.isLoading = false;
-        this.cdr.markForCheck();
+        Promise.resolve().then(() => { this.cdr.markForCheck(); });
         this.internalSafeUpdateChart();
       },
       error: () => {
         this.fullData = [];
         this.isLoading = false;
-        this.cdr.markForCheck();
+        Promise.resolve().then(() => { this.cdr.markForCheck(); });
         this.showErrorChart('Error loading graph data');
       }
     });
@@ -262,7 +292,9 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
   }
 
   ngOnDestroy(): void {
-    // Clean up subscription to prevent memory leaks
+    window.removeEventListener('statsColumnsChanged', this.columnsChangedHandler);
+    this.destroy$.next();
+    this.destroy$.complete();
     if (this.translationSubscription) {
       this.translationSubscription.unsubscribe();
     }
@@ -663,6 +695,7 @@ export class HighchartsGraphComponent implements OnInit, OnChanges, AfterViewIni
       case 'download': return 'StatsDownloadMB';
       case 'upload': return 'StatsUploadMB';
       case 'uptime': return 'StatsUptimeSeconds';
+      case 'words': return 'StatsWords';
       case 'pulses': return 'StatsPulses';
       default: return null;
     }

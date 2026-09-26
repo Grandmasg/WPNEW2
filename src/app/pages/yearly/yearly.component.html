@@ -1,9 +1,10 @@
 <div class="container">
   <div style="padding-bottom: 1rem;"></div>
 
-  <app-team-rank-banner [currentTheme]="currentTheme"></app-team-rank-banner>
+  <app-team-rank-banner [currentTheme]="currentTheme" [team]="teamname" [offset]="offset"></app-team-rank-banner>
 
-  <app-date-input-group 
+
+  <app-date-input-group
     [selectedDate]="selectedDate"
     [offset]="offset"
     viewType="yearly"
@@ -17,18 +18,15 @@
       <div class="me-3 mb-1 mb-md-0">
         <i class="fa-regular fa-calendar"></i> {{ 'common.showing' | translate }} <strong>{{ 'nav.yearly' | translate }}</strong> {{ 'common.dataFor' | translate }}: 
         <strong>
-          <ng-container *ngIf="xmlDateRange.current && xmlDateRange.previous">
+          @if (xmlDateRange.current && xmlDateRange.previous) {
             {{ formatDateString(xmlDateRange.previous || null) }} {{ 'common.to' | translate }} {{ formatDateString(xmlDateRange.current || null) }}
-          </ng-container>
-          <ng-container *ngIf="xmlDateRange.current && !xmlDateRange.previous">
+          } @else if (xmlDateRange.current) {
             {{ formatDateString(xmlDateRange.current || null) }}
-          </ng-container>
-          <ng-container *ngIf="!xmlDateRange.current && startDate && endDate">
+          } @else if (startDate && endDate) {
             {{ formatDateString(startDate) }} {{ 'common.to' | translate }} {{ formatDateString(endDate) }}
-          </ng-container>
-          <ng-container *ngIf="!xmlDateRange.current && !(startDate && endDate)">
+          } @else {
             {{ getFormattedDate() }}
-          </ng-container>
+          }
         </strong>
       </div>
       <div class="me-3 mb-1 mb-md-0">
@@ -40,20 +38,21 @@
     </div>
     
     <!-- XML Changes Tables - Only show when there's data -->
-    <app-xml-changes 
-      *ngIf="xmlChanges && xmlChanges.length > 0"
-      [isLoading]="xmlLoading" 
-      [hasError]="false" 
-      [changes]="getFormattedChanges()" 
-      [date]="selectedDate" 
-      [team]="teamname" 
-      [currentTheme]="currentTheme" 
-      [offset]="offset" 
-      [showSummary]="true" 
-      [xmlData]="xmlChanges" 
-      [skipAutoLoad]="true" 
-      [parentLoaded]="!isLoading">
-    </app-xml-changes>
+    @if (xmlChanges && xmlChanges.length > 0) {
+      <app-xml-changes
+        [isLoading]="xmlLoading"
+        [hasError]="false"
+        [changes]="getFormattedChanges()"
+        [date]="selectedDate"
+        [team]="teamname"
+        [currentTheme]="currentTheme"
+        [offset]="offset"
+        [showSummary]="true"
+        [xmlData]="xmlChanges"
+        [skipAutoLoad]="true"
+        [parentLoaded]="!isLoading">
+      </app-xml-changes>
+    }
     
     <app-stats-table 
       [data]="stats" 

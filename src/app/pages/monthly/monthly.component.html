@@ -1,9 +1,10 @@
 <div class="container" #monthlyContainer>
   <div style="padding-bottom: 1rem;"></div>
 
-  <app-team-rank-banner [currentTheme]="currentTheme"></app-team-rank-banner>
+  <app-team-rank-banner [currentTheme]="currentTheme" [team]="teamname" [offset]="offset"></app-team-rank-banner>
 
-  <app-date-input-group 
+
+  <app-date-input-group
     [selectedDate]="selectedDate"
     [offset]="offset"
     viewType="monthly"
@@ -17,18 +18,15 @@
       <div class="me-3 mb-1 mb-md-0">
         <i class="fa-regular fa-calendar"></i> {{ 'common.showing' | translate }} <strong>{{ 'nav.monthly' | translate }}</strong> {{ 'common.dataFor' | translate }}: 
         <strong>
-          <ng-container *ngIf="current && previous">
+          @if (current && previous) {
             {{ formatDateString(previous) }} {{ 'common.to' | translate }} {{ formatDateString(current) }}
-          </ng-container>
-          <ng-container *ngIf="current && !previous">
+          } @else if (current) {
             {{ formatDateString(current) }}
-          </ng-container>
-          <ng-container *ngIf="!current && startDate && endDate">
+          } @else if (startDate && endDate) {
             {{ formatDateString(startDate) }} {{ 'common.to' | translate }} {{ formatDateString(endDate) }}
-          </ng-container>
-          <ng-container *ngIf="!current && !(startDate && endDate)">
+          } @else {
             {{ selectedDate | date:'MMMM yyyy' }}
-          </ng-container>
+          }
         </strong>
       </div>
       <div class="me-3 mb-1 mb-md-0">
@@ -40,20 +38,21 @@
     </div>
 
     <!-- XML Changes Tables - Only show when there's data -->
-    <app-xml-changes 
-      *ngIf="xmlChanges && xmlChanges.length > 0"
-      [isLoading]="xmlLoading" 
-      [hasError]="false" 
-      [changes]="getFormattedChanges()" 
-      [date]="selectedDate" 
-      [team]="teamname" 
-      [currentTheme]="currentTheme" 
-      [offset]="offset" 
-      [showSummary]="true" 
-      [xmlData]="xmlChanges" 
-      [skipAutoLoad]="true" 
-      [parentLoaded]="!isLoading">
-    </app-xml-changes>
+    @if (xmlChanges && xmlChanges.length > 0) {
+      <app-xml-changes
+        [isLoading]="xmlLoading"
+        [hasError]="false"
+        [changes]="getFormattedChanges()"
+        [date]="selectedDate"
+        [team]="teamname"
+        [currentTheme]="currentTheme"
+        [offset]="offset"
+        [showSummary]="true"
+        [xmlData]="xmlChanges"
+        [skipAutoLoad]="true"
+        [parentLoaded]="!isLoading">
+      </app-xml-changes>
+    }
 
     <!-- Add the stats table with revised attributes -->
     <app-stats-table 

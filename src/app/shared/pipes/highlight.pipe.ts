@@ -13,14 +13,18 @@ export class HighlightPipe implements PipeTransform {
       return value;
     }
 
-    // Escape special regex characters in the search term
+    // Escape HTML entities eerst zodat kwaadaardige HTML uit de waarde onschadelijk is
+    const escaped = value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
     const escapedTerm = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    
-    // Create a regex to find the search term (case-insensitive)
     const regex = new RegExp(escapedTerm, 'gi');
-    
-    // Replace matches with highlighted span
-    const highlighted = value.replace(regex, (match) => {
+
+    const highlighted = escaped.replace(regex, (match) => {
       return `<mark class="highlight">${match}</mark>`;
     });
 

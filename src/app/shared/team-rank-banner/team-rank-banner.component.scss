@@ -4,6 +4,12 @@
   font-size: 0.75rem;
   border: 1px solid var(--bs-border-color);
 
+  &.banner-open {
+    border-radius: 0.375rem 0.375rem 0 0;
+    border-bottom: none;
+    margin-bottom: 0;
+  }
+
   &.banner-light {
     background-color: var(--bs-tertiary-bg);
   }

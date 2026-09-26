@@ -7,6 +7,7 @@ import { StatsService, StatRecord } from '../../shared/services/stats.service';
 import { XmlChangesComponent } from '../../shared/xml-changes/xml-changes.component';
 import { HighchartsGraphComponent } from '../../shared/highcharts-graph/highcharts-graph.component';
 import { TeamRankBannerComponent } from '../../shared/team-rank-banner/team-rank-banner.component';
+import { TeamStatsComponent } from '../../shared/team-stats/team-stats.component';
 import { DebugService } from '../../shared/services/debug.service';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '../../shared/services/translate.service'; // Added TranslateService
@@ -21,7 +22,8 @@ import { ThemeService, ThemeMode } from '../../shared/services/theme.service';
     StatsTableComponent,
     XmlChangesComponent,
     HighchartsGraphComponent,
-    TeamRankBannerComponent
+    TeamRankBannerComponent,
+    TeamStatsComponent
   ],
   templateUrl: './overall.component.html',
   styleUrls: ['./overall.component.scss']
@@ -125,14 +127,14 @@ export class OverallComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Subscribe to language changes for consistency
     const langSubscription = this.translateService.translationsChanged$.subscribe(() => {
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
     this.subscriptions.push(langSubscription);
 
     // Subscribe to theme changes
     this.themeSubscription = this.themeService.currentTheme$.subscribe((theme: ThemeMode) => {
       this.currentTheme = theme === 'dark' ? 'dark' : 'light';
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
       // No more showChart remount or retrySyncChartComponent
     });
   }

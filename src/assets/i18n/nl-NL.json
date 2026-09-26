@@ -125,7 +125,8 @@
     "better": "(beter)",
     "worse": "(slechter)",
     "same": "hetzelfde",
-    "change": "Verandering"
+    "change": "Verandering",
+    "noRanking": "Alleen teamranglijst"
   },
 
   "pagination": {

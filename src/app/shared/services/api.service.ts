@@ -403,6 +403,24 @@ export class ApiService {
   /**
    * Get enriched user detail from WhatPulse API (cached 1h on backend)
    */
+  getUserDayRecords(userId: number): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/user-dayrecords.php?user_id=${userId}`).pipe(
+      catchError(error => {
+        this.debugService.error('ApiService', 'Error fetching day records:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  getUserPulses(userId: number, limit = 15, page = 1): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/user-pulses.php?user_id=${userId}&limit=${limit}&page=${page}`).pipe(
+      catchError(error => {
+        this.debugService.error('ApiService', 'Error fetching user pulses:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   getUserDetail(userId: number): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/user-detail.php?user_id=${userId}`).pipe(
       catchError(error => {
@@ -415,6 +433,15 @@ export class ApiService {
   /**
    * Get team global ranking from WhatPulse API (cached 1h on backend)
    */
+  getTeamStats(team: string, offset: string = '0'): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/team-stats.php?team=${encodeURIComponent(team)}&offset=${offset}`).pipe(
+      catchError(error => {
+        this.debugService.error('ApiService', 'Error fetching team stats:', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
   getTeamRank(): Observable<any> {
     return this.http.get<any>(`${this.baseUrl}/team-rank.php`).pipe(
       catchError(error => {

@@ -1,9 +1,10 @@
 <div class="container" #overallContainer>
   <div style="padding-bottom: 1rem;"></div>
 
-  <app-team-rank-banner [currentTheme]="currentTheme"></app-team-rank-banner>
+  <app-team-rank-banner [currentTheme]="currentTheme" [team]="teamname" [offset]="offset"></app-team-rank-banner>
 
-  <app-date-input-group 
+
+  <app-date-input-group
     [selectedDate]="selectedDate"
     [offset]="offset"
     viewType="overall"

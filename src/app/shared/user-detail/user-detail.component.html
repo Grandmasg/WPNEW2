@@ -1,4 +1,4 @@
-<div class="offcanvas-header" [ngClass]="{'bg-dark text-light': currentTheme === 'dark'}">
+<div class="offcanvas-header border-bottom">
   <div class="d-flex align-items-center gap-2">
     @if (user?.avatar) {
       <img [src]="user.avatar" class="avatar-lg rounded-circle"
@@ -12,6 +12,10 @@
             <i class="fa-solid fa-star"></i>
           </span>
         }
+        <a [href]="'https://whatpulse.org/stats/users/' + userId + '/'" target="_blank" rel="noopener"
+           class="ms-2 text-muted" style="font-size:0.8rem;" title="WhatPulse profiel">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
       </h5>
       @if (user?.subteam) {
         <small class="text-muted d-block"><i class="fa-solid fa-users me-1"></i>{{ user.subteam }}</small>
@@ -31,10 +35,14 @@
       @if (user?.computer_count) {
         <small class="text-muted d-block"><i class="fa-solid fa-computer me-1"></i>{{ user.computer_count }} computer(s)</small>
       }
+      @if (user?.country_iso) {
+        <small class="text-muted d-block">
+          <span class="fi fi-{{ user.country_iso }} me-1"></span>{{ user.country_name }}
+        </small>
+      }
     </div>
   </div>
-  <button type="button" class="btn-close" [class.btn-close-white]="currentTheme === 'dark'"
-          (click)="activeOffcanvas.dismiss()"></button>
+  <button type="button" class="btn-close" (click)="activeOffcanvas.dismiss()"></button>
 </div>
 
 <div class="offcanvas-body">
@@ -99,10 +107,81 @@
       </div>
     </div>
 
+    <!-- Milestones -->
+    @if (milestones.length) {
+      <h6 class="section-title"><i class="fa-solid fa-trophy me-1"></i> Milestones</h6>
+      <div class="d-flex flex-wrap gap-1 mb-3">
+        @for (m of milestones; track m.label) {
+          <span class="badge bg-secondary">{{ m.icon }} {{ m.label }}</span>
+        }
+      </div>
+    }
+
+    <!-- Dagrecords -->
+    @if (dayRecords) {
+      <h6 class="section-title"><i class="fa-solid fa-star me-1"></i> Beste dag ooit</h6>
+      <div class="stats-grid mb-3">
+        @if (dayRecords.keys?.value) {
+          <div class="stat-item">
+            <span class="stat-label"><i class="fa-solid fa-keyboard me-1"></i>Toetsen</span>
+            <div>
+              <span class="stat-value">{{ formatNumber(dayRecords.keys.value) }}</span>
+              <small class="text-muted d-block">{{ dayRecords.keys.datum | date:'dd-MM-yyyy' }}</small>
+            </div>
+          </div>
+        }
+        @if (dayRecords.clicks?.value) {
+          <div class="stat-item">
+            <span class="stat-label"><i class="fa-solid fa-computer-mouse me-1"></i>Klikken</span>
+            <div>
+              <span class="stat-value">{{ formatNumber(dayRecords.clicks.value) }}</span>
+              <small class="text-muted d-block">{{ dayRecords.clicks.datum | date:'dd-MM-yyyy' }}</small>
+            </div>
+          </div>
+        }
+        @if (dayRecords.scrolls?.value) {
+          <div class="stat-item">
+            <span class="stat-label"><i class="fa-solid fa-scroll me-1"></i>Scrollen</span>
+            <div>
+              <span class="stat-value">{{ formatNumber(dayRecords.scrolls.value) }}</span>
+              <small class="text-muted d-block">{{ dayRecords.scrolls.datum | date:'dd-MM-yyyy' }}</small>
+            </div>
+          </div>
+        }
+        @if (dayRecords.download?.value) {
+          <div class="stat-item">
+            <span class="stat-label"><i class="fa-solid fa-download me-1"></i>Download</span>
+            <div>
+              <span class="stat-value">{{ formatBytes(dayRecords.download.value) }}</span>
+              <small class="text-muted d-block">{{ dayRecords.download.datum | date:'dd-MM-yyyy' }}</small>
+            </div>
+          </div>
+        }
+        @if (dayRecords.upload?.value) {
+          <div class="stat-item">
+            <span class="stat-label"><i class="fa-solid fa-upload me-1"></i>Upload</span>
+            <div>
+              <span class="stat-value">{{ formatBytes(dayRecords.upload.value) }}</span>
+              <small class="text-muted d-block">{{ dayRecords.upload.datum | date:'dd-MM-yyyy' }}</small>
+            </div>
+          </div>
+        }
+        @if (dayRecords.distance?.value) {
+          <div class="stat-item">
+            <span class="stat-label"><i class="fa-solid fa-route me-1"></i>Afstand</span>
+            <div>
+              <span class="stat-value">{{ formatNumber(dayRecords.distance.value) }} mi</span>
+              <small class="text-muted d-block">{{ dayRecords.distance.datum | date:'dd-MM-yyyy' }}</small>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
     <!-- Grafiek -->
-    @if (chartOptions) {
-      <h6 class="section-title"><i class="fa-solid fa-chart-area me-1"></i> Laatste 30 dagen</h6>
-      <div class="btn-group btn-group-sm mb-2">
+    <h6 class="section-title"><i class="fa-solid fa-chart-area me-1"></i> Laatste {{ selectedDays }} dagen</h6>
+    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
+      <div class="btn-group btn-group-sm">
         <button class="btn" [class.btn-primary]="selectedMetric === 'keys'"
                 [class.btn-outline-secondary]="selectedMetric !== 'keys'"
                 (click)="selectMetric('keys')">Toetsen</button>
@@ -113,11 +192,81 @@
                 [class.btn-outline-secondary]="selectedMetric !== 'scrolls'"
                 (click)="selectMetric('scrolls')">Scrollen</button>
       </div>
+      <div class="btn-group btn-group-sm">
+        <button class="btn" [class.btn-secondary]="selectedDays === 30"
+                [class.btn-outline-secondary]="selectedDays !== 30"
+                (click)="selectDays(30)">30d</button>
+        <button class="btn" [class.btn-secondary]="selectedDays === 90"
+                [class.btn-outline-secondary]="selectedDays !== 90"
+                (click)="selectDays(90)">90d</button>
+        <button class="btn" [class.btn-secondary]="selectedDays === 365"
+                [class.btn-outline-secondary]="selectedDays !== 365"
+                (click)="selectDays(365)">365d</button>
+      </div>
+    </div>
+    @if (chartOptions) {
       <highcharts-chart
         [constructorType]="'chart'"
         [options]="chartOptions"
         style="width:100%;display:block;">
       </highcharts-chart>
+    }
+
+    <!-- Pulse-geschiedenis -->
+    <div class="d-flex align-items-center justify-content-between mt-3 mb-1">
+      <h6 class="section-title mb-0 flex-grow-1"><i class="fa-solid fa-bolt me-1"></i> Pulse-geschiedenis</h6>
+      <button class="btn btn-sm ms-2" (click)="togglePulses()"
+              [class.btn-secondary]="showPulses"
+              [class.btn-outline-secondary]="!showPulses">
+        <i class="fa-solid me-1" [class.fa-chevron-up]="showPulses" [class.fa-chevron-down]="!showPulses"></i>
+        {{ showPulses ? 'Verbergen' : 'Tonen' }}
+      </button>
+    </div>
+    <div class="border-bottom mb-2"></div>
+
+    @if (showPulses) {
+      @if (pulsesLoading) {
+        <div class="text-center py-2"><div class="spinner-border spinner-border-sm text-primary"></div></div>
+      } @else if (pulses.length) {
+        <div class="table-responsive">
+          <table class="table table-sm table-hover mb-1" style="font-size:0.75rem;">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th class="text-end">Toetsen</th>
+                <th class="text-end">Klikken</th>
+                <th class="text-end">Scrollen</th>
+                <th>Computer</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of pulses; track p.id) {
+                <tr>
+                  <td class="text-nowrap">{{ formatPulseDate(p.date) }}</td>
+                  <td class="text-end">{{ formatNumber(p.keys) }}</td>
+                  <td class="text-end">{{ formatNumber(p.clicks) }}</td>
+                  <td class="text-end">{{ formatNumber(p.scrolls) }}</td>
+                  <td class="text-truncate" style="max-width:100px;" [title]="p.computer?.name">{{ p.computer?.name }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        @if (pulsesPagination && pulsesPagination.last_page > 1) {
+          <div class="d-flex justify-content-between align-items-center mt-1">
+            <small class="text-muted">{{ pulsesPagination.total }} pulses</small>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary" [disabled]="pulsesPage <= 1"
+                      (click)="loadPulses(pulsesPage - 1)"><i class="fa-solid fa-chevron-left"></i></button>
+              <span class="btn btn-outline-secondary disabled">{{ pulsesPage }} / {{ pulsesPagination.last_page }}</span>
+              <button class="btn btn-outline-secondary" [disabled]="pulsesPage >= pulsesPagination.last_page"
+                      (click)="loadPulses(pulsesPage + 1)"><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+          </div>
+        }
+      } @else {
+        <p class="text-muted small">Geen pulses gevonden.</p>
+      }
     }
   }
 </div>

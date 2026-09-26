@@ -28,6 +28,7 @@ export class UserDetailComponent implements OnInit {
 
   chartOptions: Highcharts.Options | null = null;
   selectedMetric: 'keys' | 'clicks' | 'scrolls' = 'keys';
+  selectedDays: 30 | 90 | 365 = 90;
 
   rankItems = [
     { key: 'keys',     icon: 'fa-keyboard',      label: 'stats.keys' },
@@ -38,6 +39,48 @@ export class UserDetailComponent implements OnInit {
     { key: 'uptime',   icon: 'fa-clock',          label: 'stats.uptime' },
     { key: 'distance', icon: 'fa-route',          label: 'stats.distance' },
   ];
+
+  milestones: { icon: string; label: string; reached: boolean }[] = [];
+
+  private readonly MILESTONES_BASE: { icon: string; label: string; metric: string; threshold: number }[] = [
+    { icon: '⌨️', label: '1M toetsen',    metric: 'keys',           threshold: 1_000_000 },
+    { icon: '⌨️', label: '10M toetsen',   metric: 'keys',           threshold: 10_000_000 },
+    { icon: '⌨️', label: '50M toetsen',   metric: 'keys',           threshold: 50_000_000 },
+    { icon: '⌨️', label: '100M toetsen',  metric: 'keys',           threshold: 100_000_000 },
+    { icon: '⌨️', label: '250M toetsen',  metric: 'keys',           threshold: 250_000_000 },
+    { icon: '⌨️', label: '500M toetsen',  metric: 'keys',           threshold: 500_000_000 },
+    { icon: '⌨️', label: '1B toetsen',    metric: 'keys',           threshold: 1_000_000_000 },
+    { icon: '🖱️', label: '1M klikken',    metric: 'clicks',         threshold: 1_000_000 },
+    { icon: '🖱️', label: '10M klikken',   metric: 'clicks',         threshold: 10_000_000 },
+    { icon: '🖱️', label: '50M klikken',   metric: 'clicks',         threshold: 50_000_000 },
+    { icon: '🖱️', label: '100M klikken',  metric: 'clicks',         threshold: 100_000_000 },
+    { icon: '🖱️', label: '250M klikken',  metric: 'clicks',         threshold: 250_000_000 },
+    { icon: '📜', label: '1M scrollen',   metric: 'scrolls',        threshold: 1_000_000 },
+    { icon: '📜', label: '10M scrollen',  metric: 'scrolls',        threshold: 10_000_000 },
+    { icon: '📜', label: '50M scrollen',  metric: 'scrolls',        threshold: 50_000_000 },
+    { icon: '📜', label: '100M scrollen', metric: 'scrolls',        threshold: 100_000_000 },
+    { icon: '⏱️', label: '1 jaar uptime', metric: 'uptime_seconds', threshold: 365 * 24 * 3600 },
+    { icon: '⏱️', label: '2 jaar uptime', metric: 'uptime_seconds', threshold: 2 * 365 * 24 * 3600 },
+    { icon: '⏱️', label: '3 jaar uptime', metric: 'uptime_seconds', threshold: 3 * 365 * 24 * 3600 },
+    { icon: '⏱️', label: '5 jaar uptime', metric: 'uptime_seconds', threshold: 5 * 365 * 24 * 3600 },
+    { icon: '⏱️', label: '7 jaar uptime', metric: 'uptime_seconds', threshold: 7 * 365 * 24 * 3600 },
+    { icon: '⏱️', label: '10 jaar uptime',metric: 'uptime_seconds', threshold: 10 * 365 * 24 * 3600 },
+    { icon: '⚡', label: '100 pulses',    metric: 'pulses',         threshold: 100 },
+    { icon: '⚡', label: '500 pulses',    metric: 'pulses',         threshold: 500 },
+    { icon: '⚡', label: '1.000 pulses',  metric: 'pulses',         threshold: 1_000 },
+    { icon: '⚡', label: '5.000 pulses',  metric: 'pulses',         threshold: 5_000 },
+    { icon: '⚡', label: '10.000 pulses', metric: 'pulses',         threshold: 10_000 },
+    { icon: '⚡', label: '50.000 pulses', metric: 'pulses',         threshold: 50_000 },
+    { icon: '⚡', label: '100.000 pulses',metric: 'pulses',         threshold: 100_000 },
+  ];
+
+  readonly Math = Math;
+  dayRecords: any = null;
+  pulses: any[] = [];
+  pulsesPagination: any = null;
+  pulsesLoading = false;
+  pulsesPage = 1;
+  showPulses = false;
 
   private historyData: any[] = [];
 
@@ -51,12 +94,15 @@ export class UserDetailComponent implements OnInit {
   ngOnInit(): void {
     forkJoin({
       detail:  this.apiService.getUserDetail(this.userId).pipe(catchError(() => of(null))),
-      history: this.apiService.getUserHistory(this.userId, 30).pipe(catchError(() => of({ data: [] })))
+      history: this.apiService.getUserHistory(this.userId, this.selectedDays).pipe(catchError(() => of({ data: [] }))),
+      records: this.apiService.getUserDayRecords(this.userId).pipe(catchError(() => of(null)))
     }).subscribe({
-      next: ({ detail, history }) => {
+      next: ({ detail, history, records }) => {
         this.user = detail;
         this.historyData = history?.data ?? [];
+        this.dayRecords = records?.records ?? null;
         if (!detail) { this.hasError = true; this.isLoading = false; this.cdr.markForCheck(); return; }
+        this.buildMilestones();
         this.buildChart();
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -69,10 +115,81 @@ export class UserDetailComponent implements OnInit {
     });
   }
 
+  togglePulses(): void {
+    this.showPulses = !this.showPulses;
+    this.cdr.markForCheck();
+    if (this.showPulses && !this.pulses.length) {
+      this.loadPulses(1);
+    }
+  }
+
+  loadPulses(page: number): void {
+    this.pulsesLoading = true;
+    this.pulsesPage = page;
+    this.cdr.markForCheck();
+    this.apiService.getUserPulses(this.userId, 15, page).pipe(
+      catchError(() => of({ pulses: [], pagination: null }))
+    ).subscribe(res => {
+      this.pulses = res.pulses ?? [];
+      this.pulsesPagination = res.pagination ?? null;
+      this.pulsesLoading = false;
+      this.cdr.markForCheck();
+    });
+  }
+
+  formatPulseDate(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', year: 'numeric' })
+      + ' ' + d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  private buildMilestones(): void {
+    const t = this.user?.totals ?? {};
+    const metric = this.user?.distance_system === 'metric';
+    const distanceVal = metric
+      ? (t.distance_miles ?? 0) * 1.60934
+      : (t.distance_miles ?? 0);
+    const distanceUnit = metric ? 'km' : 'mi';
+
+    const distanceMilestones = [500, 1000, 2500, 5000, 10000, 25000, 50000].map(n => ({
+      icon: '🗺️', label: `${n.toLocaleString()} ${distanceUnit}`,
+      metric: 'distance', threshold: n
+    }));
+
+    const values: Record<string, number> = {
+      keys:           t.keys           ?? 0,
+      clicks:         t.clicks         ?? 0,
+      scrolls:        t.scrolls        ?? 0,
+      uptime_seconds: t.uptime_seconds ?? 0,
+      pulses:         this.user?.pulses ?? 0,
+      distance:       distanceVal,
+    };
+
+    const all = [...this.MILESTONES_BASE, ...distanceMilestones];
+    this.milestones = all
+      .filter(m => values[m.metric] >= m.threshold)
+      .map(m => ({ icon: m.icon, label: m.label, reached: true }));
+  }
+
   selectMetric(metric: 'keys' | 'clicks' | 'scrolls'): void {
     this.selectedMetric = metric;
     this.buildChart();
     this.cdr.markForCheck();
+  }
+
+  selectDays(days: 30 | 90 | 365): void {
+    if (this.selectedDays === days) return;
+    this.selectedDays = days;
+    this.isLoading = true;
+    this.chartOptions = null;
+    this.cdr.markForCheck();
+    this.apiService.getUserHistory(this.userId, days).pipe(catchError(() => of({ data: [] }))).subscribe(history => {
+      this.historyData = history?.data ?? [];
+      this.buildChart();
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    });
   }
 
   private buildChart(): void {
@@ -90,13 +207,22 @@ export class UserDetailComponent implements OnInit {
     };
 
     this.chartOptions = {
-      chart: { type: 'area', height: 160, backgroundColor: bgColor, margin: [10, 10, 30, 50] },
+      chart: { type: 'area', height: 220, backgroundColor: bgColor, margin: [10, 10, 45, 55] },
       title: { text: undefined },
-      xAxis: { categories, labels: { enabled: false }, tickLength: 0 },
+      xAxis: {
+        categories,
+        labels: {
+          enabled: true,
+          style: { color: textColor, fontSize: '9px' },
+          step: Math.ceil(categories.length / 8),
+          rotation: -35,
+        },
+        tickLength: 3,
+      },
       yAxis: { title: { text: undefined }, labels: { style: { color: textColor, fontSize: '10px' } }, gridLineColor: isDark ? '#444' : '#e0e0e0' },
       series: [{ type: 'area', name: metricLabels[this.selectedMetric], data: values, color: '#18bc9c', fillOpacity: 0.3, lineWidth: 2, marker: { enabled: false } }],
       legend: { enabled: false },
-      tooltip: { formatter: function() { return `<b>${this.x}</b><br>${(this.y as number).toLocaleString()}`; } },
+      tooltip: { formatter: function() { return `<b>${categories[this.x as number]}</b><br>${(this.y as number).toLocaleString()}`; } },
       credits: { enabled: false }
     };
   }

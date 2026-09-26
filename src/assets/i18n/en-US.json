@@ -126,7 +126,8 @@
     "better": "(better)",
     "worse": "(worse)",
     "same": "same",
-    "change": "Change"
+    "change": "Change",
+    "noRanking": "Team ranking only"
   },
 
   "pagination": {
