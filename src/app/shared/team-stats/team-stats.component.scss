@@ -1,0 +1,62 @@
+.team-stats-card {
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0 0 0.375rem 0.375rem;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.team-stats-header {
+  padding: 0.6rem 1rem;
+  background: var(--bs-tertiary-bg);
+  border-bottom: 1px solid var(--bs-border-color);
+  user-select: none;
+}
+
+.team-stats-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.team-stats-body {
+  padding: 0.75rem 1rem;
+  background: var(--bs-body-bg);
+}
+
+.ts-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--bs-secondary-color);
+  border-bottom: 1px solid var(--bs-border-color);
+  padding-bottom: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.ts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.4rem;
+}
+
+.ts-item {
+  display: flex;
+  flex-direction: column;
+  padding: 0.3rem 0.5rem;
+  background: var(--bs-tertiary-bg);
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+}
+
+.ts-label { color: var(--bs-secondary-color); font-size: 0.75rem; }
+.ts-value { font-weight: 600; }
+.ts-avg   { font-size: 0.7rem; color: var(--bs-secondary-color); }
+
+.ts-top-pill {
+  padding: 0.2rem 0.6rem;
+  background: var(--bs-tertiary-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 1rem;
+  font-size: 0.78rem;
+  white-space: nowrap;
+}

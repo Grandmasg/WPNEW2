@@ -1,28 +1,49 @@
-<div *ngIf="!hasError" class="team-rank-banner mb-2"
-     [ngClass]="{'banner-dark': currentTheme === 'dark', 'banner-light': currentTheme === 'light'}">
+@if (!hasError) {
+  <div class="team-rank-banner"
+       [class.mb-2]="statsCollapsed"
+       [class.banner-open]="!statsCollapsed"
+       [ngClass]="{'banner-dark': currentTheme === 'dark', 'banner-light': currentTheme === 'light'}">
 
-  <!-- Loading -->
-  <div *ngIf="isLoading" class="d-flex align-items-center gap-2 py-1">
-    <i class="fa-solid fa-spinner fa-spin"></i>
-    <small class="text-muted">{{ 'common.loading' | translate }}</small>
-  </div>
-
-  <!-- Content -->
-  <div *ngIf="!isLoading && teamRank" class="d-flex flex-wrap align-items-center gap-3">
-    <div class="team-name">
-      <i class="fa-solid fa-trophy me-1"></i>
-      <strong>{{ teamRank.name }}</strong>
-      <small class="ms-2 text-muted">({{ teamRank.members }} {{ 'stats.users' | translate }})</small>
-    </div>
-
-    <div class="rank-items d-flex flex-wrap gap-2">
-      <div *ngFor="let item of rankItems"
-           class="rank-pill"
-           [ngClass]="rankClass(getRank(item.key))"
-           [title]="item.label | translate">
-        <i class="fa-solid {{ item.icon }}"></i>
-        <span>#{{ getRank(item.key) ?? '—' }}</span>
+    @if (isLoading) {
+      <div class="d-flex align-items-center gap-2 py-1">
+        <i class="fa-solid fa-spinner fa-spin"></i>
+        <small class="text-muted">{{ 'common.loading' | translate }}</small>
       </div>
-    </div>
+    }
+
+    @if (!isLoading && teamRank) {
+      <div class="d-flex flex-wrap align-items-center gap-3">
+        <div class="team-name">
+          <i class="fa-solid fa-trophy me-1"></i>
+          <strong>{{ teamRank.name }}</strong>
+          <small class="ms-2 text-muted">({{ teamRank.members }} {{ 'stats.users' | translate }})</small>
+        </div>
+
+        <div class="rank-items d-flex flex-wrap gap-2">
+          @for (item of rankItems; track item.key) {
+            <div class="rank-pill"
+                 [ngClass]="rankClass(getRank(item.key))"
+                 [title]="item.label | translate">
+              <i class="fa-solid {{ item.icon }}"></i>
+              <span>#{{ getRank(item.key) ?? '—' }}</span>
+            </div>
+          }
+        </div>
+
+        <button class="btn btn-sm btn-link ms-auto p-0 text-muted"
+                (click)="toggleStats()"
+                [title]="statsCollapsed ? 'Stats tonen' : 'Stats verbergen'">
+          <i class="fa-solid" [class.fa-chevron-down]="statsCollapsed" [class.fa-chevron-up]="!statsCollapsed"></i>
+        </button>
+      </div>
+    }
   </div>
-</div>
+
+  <app-team-stats
+    [team]="team"
+    [offset]="offset"
+    [currentTheme]="currentTheme"
+    [collapsed]="statsCollapsed"
+    [teamDateFormed]="teamRank?.date_formed ?? null">
+  </app-team-stats>
+}

@@ -49,14 +49,6 @@ body {
   font-size: 0.875rem;
 }
 
-/* Button close filter toggle for theme */
-button.btn-close {
-  filter: invert(1);
-}
-
-html[data-bs-theme='dark'] button.btn-close {
-  filter: invert(0) grayscale(100%) brightness(200%);
-}
 
 /* Form controls - gebruik ALLEEN Bootstrap variabelen */
 .form-control,
@@ -207,6 +199,28 @@ html[data-bs-theme='dark'] {
   .stats-table-container,
   .graph-container {
     border-color: #495057 !important;
+  }
+}
+
+/* User detail offcanvas — hogere specificiteit om Bootswatch media-query overrides te verslaan */
+.user-detail-panel.offcanvas.offcanvas-end {
+  width: min(520px, 100vw) !important;
+  height: 100vh !important;
+  position: fixed !important;
+  display: flex !important;
+  flex-direction: column !important;
+
+  .offcanvas-header {
+    background-color: var(--bs-tertiary-bg);
+    flex-shrink: 0;
+  }
+
+  .offcanvas-body {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    flex: 1 1 0 !important;
+    overflow-y: auto !important;
+    min-height: 0 !important;
   }
 }
 

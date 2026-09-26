@@ -19,6 +19,33 @@
     No data available for the selected parameters.
   </div>
   
+  <!-- Column picker -->
+  <div class="d-flex justify-content-end mb-1" *ngIf="!isLoading && filteredData.length > 0">
+    <div ngbDropdown placement="bottom-end">
+      <button ngbDropdownToggle class="btn btn-sm btn-outline-secondary" type="button">
+        <i class="fa-solid fa-table-columns me-1"></i> Kolommen
+      </button>
+      <ul ngbDropdownMenu>
+        @for (c of columnDefs; track c.key) {
+          <li>
+            <button ngbDropdownItem class="d-flex align-items-center gap-2" type="button"
+                    (click)="toggleColumn(c.key); $event.stopPropagation()">
+              <i class="fa-solid fa-fw" [class.fa-check]="col(c.key)" [class.fa-xmark]="!col(c.key)"></i>
+              {{ c.label }}
+            </button>
+          </li>
+        }
+        <li><hr class="dropdown-divider"></li>
+        <li>
+          <button ngbDropdownItem class="d-flex align-items-center gap-2 text-secondary" type="button"
+                  (click)="resetColumns(); $event.stopPropagation()">
+            <i class="fa-solid fa-fw fa-rotate-left"></i> Reset
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
   <!-- Data table -->
   <div class="table-responsive" *ngIf="!isLoading && filteredData.length > 0">
     <table class="stats-table table table-striped" [attr.data-sorting]="sortColumn + '-' + sortDirection">
@@ -45,66 +72,66 @@
                [class.fa-sort-down]="sortColumn === 'username' && sortDirection === 'desc'"></i>
             <div class="pull-right small">{{ 'stats.team' | translate }}</div>
           </th>
-          <th class="sortable" 
-              (click)="sort('keys')" 
+          <th class="sortable" [class.d-none]="!col('keys')"
+              (click)="sort('keys')"
               data-column="keys"
               id="keys-header">
             {{ 'stats.keys' | translate }}
-            <i class="fa-solid" 
+            <i class="fa-solid"
                [class.fa-sort]="sortColumn !== 'keys'"
                [class.fa-sort-up]="sortColumn === 'keys' && sortDirection === 'asc'"
                [class.fa-sort-down]="sortColumn === 'keys' && sortDirection === 'desc'"></i>
           </th>
-          <th class="sortable" 
-              (click)="sort('clicks')" 
-              data-column="clicks" 
+          <th class="sortable" [class.d-none]="!col('clicks')"
+              (click)="sort('clicks')"
+              data-column="clicks"
               id="clicks-header">
               {{ 'stats.clicks' | translate }}
               <i class="fa-solid" [ngClass]="getSortIcon('clicks')"></i>
           </th>
-          <th class="sortable d-none d-md-table-cell" 
+          <th class="sortable" [class.d-none]="!col('scrolls')"
               (click)="sort('scrolls')"
               data-column="scrolls"
               id="scrolls-header">
             {{ 'stats.scrolls' | translate }}
             <i class="fa-solid" [ngClass]="getSortIcon('scrolls')"></i>
           </th>
-          <th class="sortable d-none d-lg-table-cell"
+          <th class="sortable" [class.d-none]="!col('distance')"
               (click)="sort('distance')"
               data-column="distance"
               id="distance-header">
             {{ 'stats.distance' | translate }}
             <i class="fa-solid" [ngClass]="getSortIcon('distance')"></i>
           </th>
-          <th class="sortable d-none d-md-table-cell"
+          <th class="sortable" [class.d-none]="!col('download')"
               (click)="sort('download')"
               data-column="download"
               id="download-header">
             {{ 'stats.download' | translate }}
             <i class="fa-solid" [ngClass]="getSortIcon('download')"></i>
           </th>
-          <th class="sortable d-none d-xl-table-cell"
+          <th class="sortable" [class.d-none]="!col('upload')"
               (click)="sort('upload')"
               data-column="upload"
               id="upload-header">
             {{ 'stats.upload' | translate }}
             <i class="fa-solid" [ngClass]="getSortIcon('upload')"></i>
           </th>
-          <th class="sortable d-none d-lg-table-cell"
+          <th class="sortable" [class.d-none]="!col('uptime')"
               (click)="sort('uptime')"
               data-column="uptime"
               id="uptime-header">
             {{ 'stats.uptime' | translate }}
             <i class="fa-solid" [ngClass]="getSortIcon('uptime')"></i>
           </th>
-          <th class="sortable d-none"
+          <th class="sortable" [class.d-none]="!col('words')"
               (click)="sort('words')"
               data-column="words"
               id="words-header">
             {{ 'stats.words' | translate }}
             <i class="fa-solid" [ngClass]="getSortIcon('words')"></i>
           </th>
-          <th class="sortable pulses-column d-none d-xl-table-cell"
+          <th class="sortable pulses-column" [class.d-none]="!col('pulses')"
               (click)="sort('pulses')"
               data-column="pulses"
               id="pulses-header">
@@ -209,10 +236,11 @@
               </span>
               <div class="pull-right small" *ngIf="row['team'] || row['Team']">{{ row['team'] || row['Team'] }}</div>
           </td>
-          <td [ngbPopover]="keysPopover" 
+          <td [class.d-none]="!col('keys')"
+              [ngbPopover]="keysPopover"
               [popoverContext]="{row: row}"
-              popoverTitle="Keys Info" 
-              triggers="mouseenter:mouseleave" 
+              popoverTitle="Keys Info"
+              triggers="mouseenter:mouseleave"
               container="body"
               popoverClass="stats-popover"
               class="cursor-help position-relative">
@@ -257,10 +285,11 @@
                   </div>
               </div>
           </td>
-          <td [ngbPopover]="clicksPopover" 
+          <td [class.d-none]="!col('clicks')"
+              [ngbPopover]="clicksPopover"
               [popoverContext]="{row: row}"
-              popoverTitle="Clicks Info" 
-              triggers="mouseenter:mouseleave" 
+              popoverTitle="Clicks Info"
+              triggers="mouseenter:mouseleave"
               container="body"
               popoverClass="stats-popover"
               class="cursor-help position-relative">
@@ -305,8 +334,8 @@
                   </div>
               </div>
           </td>
-          <td class="d-none d-md-table-cell"
-              [ngbPopover]="scrollsPopover" 
+          <td [class.d-none]="!col('scrolls')"
+              [ngbPopover]="scrollsPopover"
               [popoverContext]="{row: row}"
               popoverTitle="Scrolls Info" 
               triggers="mouseenter:mouseleave" 
@@ -354,8 +383,8 @@
                   </div>
               </div>
           </td>
-          <td class="d-none d-lg-table-cell"
-              [ngbPopover]="distancePopover" 
+          <td [class.d-none]="!col('distance')"
+              [ngbPopover]="distancePopover"
               [popoverContext]="{row: row}"
               popoverTitle="Distance Info" 
               triggers="mouseenter:mouseleave" 
@@ -403,8 +432,8 @@
                   </div>
               </div>
           </td>
-          <td class="d-none d-md-table-cell"
-              [ngbPopover]="downloadPopover" 
+          <td [class.d-none]="!col('download')"
+              [ngbPopover]="downloadPopover"
               [popoverContext]="{row: row}"
               popoverTitle="Download Info" 
               triggers="mouseenter:mouseleave" 
@@ -452,8 +481,8 @@
                   </div>
               </div>
           </td>
-          <td class="d-none d-xl-table-cell"
-              [ngbPopover]="uploadPopover" 
+          <td [class.d-none]="!col('upload')"
+              [ngbPopover]="uploadPopover"
               [popoverContext]="{row: row}"
               popoverTitle="Upload Info" 
               triggers="mouseenter:mouseleave" 
@@ -501,8 +530,8 @@
                   </div>
               </div>
           </td>
-          <td class="d-none d-lg-table-cell"
-              [ngbPopover]="uptimePopover" 
+          <td [class.d-none]="!col('uptime')"
+              [ngbPopover]="uptimePopover"
               [popoverContext]="{row: row}"
               popoverTitle="Uptime Info" 
               triggers="mouseenter:mouseleave" 
@@ -550,10 +579,37 @@
                   </div>
               </div>
           </td>
-          <td class="d-none">
-              {{ formatNumber(row['words'] || 0) }}
+          <td [class.d-none]="!col('words')"
+              [ngbPopover]="wordsPopover"
+              [popoverContext]="{row: row}"
+              popoverTitle="Words Info"
+              triggers="mouseenter:mouseleave"
+              container="body"
+              popoverClass="stats-popover"
+              class="cursor-help position-relative">
+              <div class="d-flex align-items-center">
+                <span>{{ formatNumber(row['words'] || 0) }}</span>
+                <div>
+                  <ng-container *ngIf="row['RankWordsToday'] && row['RankWordsYesterday']">
+                    <span *ngIf="(row['RankWordsYesterday'] - row['RankWordsToday']) > 0"
+                          class="badge bg-success rounded-pill">
+                      <i class="fa-solid fa-arrow-up fa-bounce"></i>
+                      {{ Math.abs(row['RankWordsYesterday'] - row['RankWordsToday']) }}
+                    </span>
+                    <span *ngIf="(row['RankWordsYesterday'] - row['RankWordsToday']) < 0"
+                          class="badge bg-danger rounded-pill">
+                      <i class="fa-solid fa-arrow-down fa-bounce-down"></i>
+                      {{ Math.abs(row['RankWordsYesterday'] - row['RankWordsToday']) }}
+                    </span>
+                    <span *ngIf="row['RankWordsYesterday'] === row['RankWordsToday']"
+                          class="badge bg-secondary rounded-pill">
+                      <i class="fa-solid fa-minus"></i>
+                    </span>
+                  </ng-container>
+                </div>
+              </div>
           </td>
-          <td class="pulses-column d-none d-xl-table-cell" [ngbPopover]="pulsesPopover"
+          <td class="pulses-column" [class.d-none]="!col('pulses')" [ngbPopover]="pulsesPopover"
               [popoverContext]="{row: row}"
               popoverTitle="Pulses Info" 
               triggers="mouseenter:mouseleave" 
@@ -570,15 +626,15 @@
         <tr class="fw-bold">
           <td>{{ 'stats.total' | translate }}</td>
           <td>{{ filteredData.length }} {{ 'stats.users' | translate }}</td>
-          <td>{{ formatNumber(totalKeys) }}</td>
-          <td>{{ formatNumber(totalClicks) }}</td>
-          <td class="d-none d-md-table-cell">{{ formatNumber(totalScrolls) }}</td>
-          <td class="d-none d-lg-table-cell">{{ formatDistance(totalDistance) }}</td>
-          <td class="d-none d-md-table-cell">{{ formatBytes(totalDownload) }}</td>
-          <td class="d-none d-xl-table-cell">{{ formatBytes(totalUpload) }}</td>
-          <td class="d-none d-lg-table-cell">{{ formatTime(totalUptime) }}</td>
-          <td class="d-none">{{ formatNumber(totalWords) }}</td>
-          <td class="d-none d-xl-table-cell">{{ formatNumber(totalPulses) }}</td>
+          <td [class.d-none]="!col('keys')">{{ formatNumber(totalKeys) }}</td>
+          <td [class.d-none]="!col('clicks')">{{ formatNumber(totalClicks) }}</td>
+          <td [class.d-none]="!col('scrolls')">{{ formatNumber(totalScrolls) }}</td>
+          <td [class.d-none]="!col('distance')">{{ formatDistance(totalDistance) }}</td>
+          <td [class.d-none]="!col('download')">{{ formatBytes(totalDownload) }}</td>
+          <td [class.d-none]="!col('upload')">{{ formatBytes(totalUpload) }}</td>
+          <td [class.d-none]="!col('uptime')">{{ formatTime(totalUptime) }}</td>
+          <td [class.d-none]="!col('words')">{{ formatNumber(totalWords) }}</td>
+          <td [class.d-none]="!col('pulses')">{{ formatNumber(totalPulses) }}</td>
         </tr>
       </tfoot>
     </table>
@@ -817,6 +873,27 @@
       </p>
     </ng-container>
     <p *ngIf="row.lastPulse || row.LastPulse"><strong>{{ 'popovers.lastPulse' | translate }}:</strong> {{ (row.lastPulse || row.LastPulse) | date:'medium' }}</p>
+  </div>
+</ng-template>
+
+<ng-template #wordsPopover let-row="row">
+  <div>
+    <p class="mb-0"><strong>{{ getTimePeriodLabels().current }}:</strong> {{ formatNumber(row['words'] || row['Words'] || 0) }}</p>
+    <p class="mb-0"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().current }}:</strong> #{{ row['RankWordsToday'] || getWordsRank(row) }}</p>
+    <p class="mb-0" *ngIf="row['RankWordsYesterday']"><strong>{{ 'popovers.rank' | translate }} {{ getTimePeriodLabels().previous }}:</strong> #{{ row['RankWordsYesterday'] }}</p>
+    <ng-container *ngIf="row['RankWordsToday'] && row['RankWordsYesterday']">
+      <p [class.text-success]="(+row['RankWordsYesterday']) > (+row['RankWordsToday'])"
+         [class.text-danger]="(+row['RankWordsYesterday']) < (+row['RankWordsToday'])">
+        <strong>{{ 'popovers.rankChange' | translate }}:</strong>
+        <ng-container *ngIf="(+row['RankWordsYesterday']) !== (+row['RankWordsToday'])">
+          {{ (+row['RankWordsYesterday']) > (+row['RankWordsToday']) ? '+' : '' }}{{ Math.abs((+row['RankWordsYesterday']) - (+row['RankWordsToday'])) }}
+          {{ (+row['RankWordsYesterday']) > (+row['RankWordsToday']) ? ('popovers.better' | translate) : ('popovers.worse' | translate) }}
+        </ng-container>
+        <ng-container *ngIf="(+row['RankWordsYesterday']) === (+row['RankWordsToday'])">
+          - ({{ 'popovers.same' | translate }})
+        </ng-container>
+      </p>
+    </ng-container>
   </div>
 </ng-template>
 

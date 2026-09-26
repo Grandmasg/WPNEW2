@@ -126,35 +126,28 @@ export class AppComponent implements OnInit {
       team: this.teamname
     });
 
-    // Listen to route changes to preserve debug parameter if it's enabled
+    // Listen to route changes: SEO, debug param preservation, title
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: any) => {
-      // Update SEO meta tags on route change
-      const routePath = event.urlAfterRedirects || event.url;
-      this.seoService.setRouteMetaTags(routePath);
+    ).subscribe((event: NavigationEnd) => {
+      const url = event.urlAfterRedirects;
+      this.seoService.setRouteMetaTags(url);
+      this.updateTitle(url);
 
-      // Check if debug is enabled but not in URL
-      const isDebugEnabled = this.debugService.isDebugEnabled();
-      const currentUrl = event.url;
-      
-      if (isDebugEnabled && !currentUrl.includes('debug=')) {
-        // Preserve debug parameter when navigating to new URLs
-        const separator = currentUrl.includes('?') ? '&' : '?';
-        const debugParam = localStorage.getItem('preferredDebugParam') || 'true';
-        const newUrl = `${currentUrl}${separator}debug=${debugParam}`;
-        
-        // Navigate to the same route but with debug parameter
-        this.router.navigateByUrl(newUrl, { replaceUrl: true, skipLocationChange: false });
+      if (this.debugService.isDebugEnabled() && !event.url.includes('debug=')) {
+        const sep = event.url.includes('?') ? '&' : '?';
+        const param = localStorage.getItem('preferredDebugParam') || 'true';
+        this.router.navigateByUrl(`${event.url}${sep}debug=${param}`, { replaceUrl: true });
       }
-      
-      // Update page title with version when route changes
-      this.updatePageTitle();
+
+      if (url.split('/').length > 4 && this.debugService.isVerboseLoggingEnabled()) {
+        this.debugService.log('AppComponent', `Added search param to route: ${url}`);
+      }
     });
 
     // Get app version and update page title on init
     this.appVersion = this.versionService.getVersionText();
-    this.updatePageTitle();
+    this.updateTitle(this.router.url);
 
     // Helper function to update from route params
     const updateFromRouteParams = (params: any) => {
@@ -254,23 +247,6 @@ export class AppComponent implements OnInit {
       this.showDetailedMetrics = isDebug;
     });
     
-    // Find the router.events subscription and modify the debug logging
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd)
-    ).subscribe((event: NavigationEnd) => {
-      // Capture current URL and see if it has search parameters
-      const url = event.urlAfterRedirects;
-      const hasSearchParam = url.split('/').length > 4;
-      
-      // Only log search parameters for debugging if explicitly enabled
-      if (hasSearchParam && this.debugService.isVerboseLoggingEnabled()) {
-        const searchParam = url.split('/')[4] || '';
-        this.debugService.log('AppComponent', `Added search param to route: ${url}`);
-      }
-      
-      // Always update the title (keep this functionality)
-      this.updateTitle(url);
-    });
 
     // Listen for realistic page load event from main content
     window.addEventListener('realistic-page-load', (event: any) => {
@@ -294,22 +270,6 @@ export class AppComponent implements OnInit {
     });
   }
 
-  /**
-   * Updates the document title to include version number
-   */
-  private updatePageTitle(): void {
-    // Get the current route path
-    const path = this.router.url.split('/')[2] || 'daily'; // Default to daily if path not found
-    
-    // Capitalize the first letter of the path
-    const pageName = path.charAt(0).toUpperCase() + path.slice(1);
-    
-    // Get the version without the 'v' prefix
-    const versionText = this.appVersion.replace(/^v/, '');
-    
-    // Set the document title with the page name and version
-    document.title = `${pageName} Stats - Grandmasg v${versionText}`;
-  }
 
   /**
    * Updates the page title based on the URL

@@ -7,6 +7,7 @@ import { StatsService, StatRecord } from '../../shared/services/stats.service';
 import { XmlChangesComponent } from '../../shared/xml-changes/xml-changes.component';
 import { HighchartsGraphComponent } from '../../shared/highcharts-graph/highcharts-graph.component';
 import { TeamRankBannerComponent } from '../../shared/team-rank-banner/team-rank-banner.component';
+import { TeamStatsComponent } from '../../shared/team-stats/team-stats.component';
 import { DebugService } from '../../shared/services/debug.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 import { TranslateService } from '../../shared/services/translate.service';
@@ -23,6 +24,7 @@ import { ThemeService, ThemeMode } from '../../shared/services/theme.service';
     XmlChangesComponent,
     HighchartsGraphComponent,
     TeamRankBannerComponent,
+    TeamStatsComponent,
     TranslatePipe
   ],
   templateUrl: './daily.component.html',
@@ -132,7 +134,7 @@ export class DailyComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Subscribe to language changes to update date formats
     const langSubscription = this.translateService.translationsChanged$.subscribe(() => {
-      this.cdr.detectChanges();
+      this.cdr.markForCheck();
     });
     this.subscriptions.push(langSubscription);
 

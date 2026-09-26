@@ -21,6 +21,7 @@ export class LocalizationService {
   // Unit system (metric or imperial)
   private unitSystemSubject = new BehaviorSubject<'metric' | 'imperial'>('metric');
   public unitSystem$ = this.unitSystemSubject.asObservable();
+  get unitSystem(): 'metric' | 'imperial' { return this.unitSystemSubject.getValue(); }
 
   // Add the missing currentLanguage property
   private currentLanguage: string = 'en-US';

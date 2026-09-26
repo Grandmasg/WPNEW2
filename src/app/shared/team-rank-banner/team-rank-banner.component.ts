@@ -2,10 +2,12 @@ import { Component, OnInit, Input, ChangeDetectorRef, ChangeDetectionStrategy } 
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../services/api.service';
 import { TranslatePipe } from '../pipes/translate.pipe';
+import { TeamStatsComponent } from '../team-stats/team-stats.component';
 
 interface TeamRank {
   name: string;
   members: number;
+  date_formed?: string;
   ranks: {
     keys?: number;
     clicks?: number;
@@ -20,17 +22,20 @@ interface TeamRank {
 @Component({
   selector: 'app-team-rank-banner',
   standalone: true,
-  imports: [CommonModule, TranslatePipe],
+  imports: [CommonModule, TranslatePipe, TeamStatsComponent],
   templateUrl: './team-rank-banner.component.html',
   styleUrl: './team-rank-banner.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TeamRankBannerComponent implements OnInit {
   @Input() currentTheme: 'light' | 'dark' = 'light';
+  @Input() team: string = '-';
+  @Input() offset: string = '0';
 
   teamRank: TeamRank | null = null;
   isLoading = true;
   hasError = false;
+  statsCollapsed = localStorage.getItem('teamStatsCollapsed') !== 'false';
 
   rankItems = [
     { key: 'keys',     icon: 'fa-keyboard',       label: 'stats.keys' },
@@ -57,6 +62,12 @@ export class TeamRankBannerComponent implements OnInit {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  toggleStats(): void {
+    this.statsCollapsed = !this.statsCollapsed;
+    localStorage.setItem('teamStatsCollapsed', String(this.statsCollapsed));
+    this.cdr.markForCheck();
   }
 
   getRank(key: string): number | null {
