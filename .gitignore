@@ -44,3 +44,12 @@ Thumbs.db
 
 # Tooling
 .serena/
+
+# Niet online
+/api/
+/assets/
+/plan/
+/stats_images/
+/public/stats_images/
+/favicon.svg
+/index.html
