@@ -7,7 +7,6 @@ import { StatsService, StatRecord } from '../../shared/services/stats.service';
 import { XmlChangesComponent } from '../../shared/xml-changes/xml-changes.component';
 import { HighchartsGraphComponent } from '../../shared/highcharts-graph/highcharts-graph.component';
 import { TeamRankBannerComponent } from '../../shared/team-rank-banner/team-rank-banner.component';
-import { TeamStatsComponent } from '../../shared/team-stats/team-stats.component';
 import { DebugService } from '../../shared/services/debug.service';
 import { Subscription } from 'rxjs';
 import { TranslateService } from '../../shared/services/translate.service'; // Added TranslateService
@@ -23,7 +22,6 @@ import { ThemeService, ThemeMode } from '../../shared/services/theme.service';
     XmlChangesComponent,
     HighchartsGraphComponent,
     TeamRankBannerComponent,
-    TeamStatsComponent
   ],
   templateUrl: './overall.component.html',
   styleUrls: ['./overall.component.scss']
